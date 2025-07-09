@@ -2,7 +2,7 @@ name: 🚀 Auto Cool Level Generator
 
 on:
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: '0 * * * *' # Setiap 1 jam sekali, menit ke-0 tiap jam
   workflow_dispatch:
 
 jobs:
@@ -59,6 +59,7 @@ jobs:
           {
             echo "# 🌌 Level: $next_name"
             echo "# Generated at: $(date -u)"
+            echo "# Dijalankan oleh: abieharyatmo01@gmail.com"
           } > "$file_name"
 
           # Simpan nama level ke environment agar bisa dipakai di step berikutnya (Telegram)
@@ -73,7 +74,7 @@ jobs:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
             🔔 DING DONG!
-            Level baru **${{ env.LEVEL_NAME }}** sudah dibuat di repo ${{ github.repository }} pada ${{ github.run_started_at || github.run_id }}.
+            Level baru **${{ env.LEVEL_NAME }}** sudah dibuat di repo ${{ github.repository }} pada ${{ github.run_started_at || github.run_id }} oleh **abieharyatmo01@gmail.com**.
 
       - name: 🤖 Configure Git
         run: |
@@ -83,5 +84,5 @@ jobs:
       - name: 🚩 Commit & Push Changes
         run: |
           git add levels/
-          git commit -m "✨ Add Level: ${{ env.LEVEL_NAME }}" || echo "Nothing to commit"
+          git commit -m "✨ Add Level: ${{ env.LEVEL_NAME }} (by abieharyatmo01@gmail.com)" || echo "Nothing to commit"
           git push
