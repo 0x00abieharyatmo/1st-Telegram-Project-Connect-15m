@@ -2,7 +2,7 @@ name: 🚀 Auto Cool Level Generator
 
 on:
   schedule:
-    - cron: '0 * * * *' # Setiap 1 jam sekali, menit ke-0 tiap jam
+    - cron: '*/15 * * * *' # Setiap 15 menit sekali
   workflow_dispatch:
 
 jobs:
@@ -18,7 +18,8 @@ jobs:
         run: |
           echo ""
           echo "=============================="
-          echo "🔔 DING DONG! Saatnya level baru!"
+          echo "🔔✨✨ LEVEL UNLOCKED! ✨✨🔔"
+          echo "🚨🚨🚨  NEW COOL LEVEL!  🚨🚨🚨"
           echo "=============================="
           echo ""
 
@@ -73,8 +74,12 @@ jobs:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
-            🔔 DING DONG!
-            Level baru **${{ env.LEVEL_NAME }}** sudah dibuat di repo ${{ github.repository }} pada ${{ github.run_started_at || github.run_id }} oleh **abieharyatmo01@gmail.com**.
+            ✨🚨 *LEVEL UNLOCKED!* 🚨✨
+            🎮 Level baru **${{ env.LEVEL_NAME }}** sudah dibuat di repo `${{ github.repository }}`
+            🕒 Waktu: `${{ github.run_started_at || github.run_id }}`
+            👤 Oleh: **abieharyatmo01@gmail.com**
+            ---
+            #NextLevel
 
       - name: 🤖 Configure Git
         run: |
