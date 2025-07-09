@@ -2,7 +2,7 @@ name: 🚀 Auto Cool Level Generator
 
 on:
   schedule:
-    - cron: '*/15 * * * *' # Setiap 15 menit sekali
+    - cron: '*/15 * * * *' # Setiap 15 menit sekali oke
   workflow_dispatch:
 
 jobs:
