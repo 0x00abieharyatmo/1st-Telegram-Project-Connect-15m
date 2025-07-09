@@ -72,6 +72,13 @@ jobs:
         run: |
           echo "FORMATTED_TIME=$(TZ='Asia/Jakarta' date '+%d-%m-%Y %H:%M:%S WIB')" >> $GITHUB_ENV
 
+      - name: 🔢 Generate Notification Counter
+        id: notif-counter
+        run: |
+          # Hitung jumlah file level yang sudah dibuat sebagai counter notifikasi
+          count=$(ls levels/level-*-*.txt 2>/dev/null | wc -l)
+          echo "NOTIF_COUNTER=$count" >> $GITHUB_ENV
+
       - name: 🔔 Kirim Notifikasi ke Telegram
         uses: appleboy/telegram-action@v0.1.0
         with:
@@ -82,6 +89,7 @@ jobs:
             🎮 Level baru **${{ env.LEVEL_NAME }}** sudah dibuat di repo `${{ github.repository }}`
 
             🕒 Waktu: `${{ env.FORMATTED_TIME }}`
+            🔢 Notifikasi ke: *${{ env.NOTIF_COUNTER }}*
             👤 Oleh: **abieharyatmo01@gmail.com**
             ---
             #NextLevel
