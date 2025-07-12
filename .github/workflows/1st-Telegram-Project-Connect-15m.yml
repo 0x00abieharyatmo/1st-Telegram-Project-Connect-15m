@@ -77,7 +77,7 @@ jobs:
           {
             echo "# 🌌 Level: $next_name"
             echo "# Generated at: $(date -u)"
-            echo "# By: abieharyatmo01@gmail.com"
+            echo "# By: Auto Cool Level Generator"
           } > "$file_name"
 
           echo "LEVEL_NAME=$next_name" >> $GITHUB_ENV
@@ -109,11 +109,16 @@ jobs:
             <b>• 🌐 Git Repo :</b> <b>${{ github.repository }}</b>
             <b>• ⏳ Deployed At :</b> <b>${{ env.FORMATTED_TIME }}</b>
             <b>• 🧾 CI Run # :</b> <b>${{ env.NOTIF_COUNTER }}</b>
-            <b>• 🔐 Commit Auth :</b> <b>abieharyatmo01@gmail.com</b>
+            <b>• 🔐 Commit Auth :</b> <b>Auto Cool Level Generator</b>
 
             <b>#DeployLikeAPro #DevOpsMode</b>
             <b>💯 This script was 100% created by Abie Haryatmo</b>
             <i>${{ env.PROGRAMMER_QUOTE }}</i>
+
+            <b>🟢 Untuk menjalankan workflow ini secara manual,<br>
+            cukup <u>kirim perintah</u>:</b>
+            <code>run</code>
+            <b>di aplikasi Telegram kamu!</b>
           format: html
 
       - name: 🤖 Configure Git
@@ -124,5 +129,5 @@ jobs:
       - name: 🚩 Commit & Push Changes
         run: |
           git add levels/
-          git commit -m "✨ Add Level: ${{ env.LEVEL_NAME }} (by abieharyatmo01@gmail.com)" || echo "Nothing to commit"
+          git commit -m "✨ Add Level: ${{ env.LEVEL_NAME }} (by Auto Cool Level Generator)" || echo "Nothing to commit"
           git push
