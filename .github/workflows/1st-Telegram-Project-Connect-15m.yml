@@ -115,8 +115,8 @@ jobs:
             <b>💯 This script was 100% created by Abie Haryatmo</b>
             <i>${{ env.PROGRAMMER_QUOTE }}</i>
 
-            <b>🟢 Untuk menjalankan workflow ini secara manual,<br>
-            cukup <u>kirim perintah</u>:</b>
+            <b>🟢 Untuk menjalankan workflow ini secara manual,</b>
+            <b>cukup <u>kirim perintah</u>:</b>
             <code>run</code>
             <b>di aplikasi Telegram kamu!</b>
           format: html
