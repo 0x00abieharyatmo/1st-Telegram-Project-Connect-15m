@@ -153,8 +153,8 @@ jobs:
             | to_entries
             | map(
                 .value.user as $u
-                | $spaces := ($max - ($u | length))
-                | $pad := ($spaces | if . > 0 then " " * . else "" end)
+                | ($max - ($u | length)) as $spaces
+                | ($spaces > 0 and ($spaces * " ") or "") as $pad
                 | if .key == 0 then
                     "🥇 \($u)\($pad) | [Score: \(.value.score)]"
                   elif .key == 1 then
