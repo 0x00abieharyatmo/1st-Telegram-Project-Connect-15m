@@ -114,15 +114,4 @@ jobs:
             <b>• 🔐 Commit Auth :</b> <b>Auto Cool Level Generator</b>
 
             <b>#DeployLikeAPro #DevOpsMode</b>
-            <b>💯 This script was 100% created by Abie Haryatmo</b>
-            <i>${{ env.PROGRAMMER_QUOTE }}</i>
-
-            <b>🟢 Untuk menjalankan workflow ini secara manual,</b>
-            <b>cukup <u>kirim perintah</u>:</b>
-            <code>run</code>
-            <b>di aplikasi Telegram kamu!</b>
-          format: html
-
-      - name: 🤖 Configure Git
-        run: |
-          git config user.name
+            <b>💯 This script
