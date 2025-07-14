@@ -3,12 +3,12 @@ name: 🚀 Auto Cool Level Generator & Weekly Winner
 on:
   schedule:
     - cron: '*/15 * * * *'
-    - cron: '0 0 * * 1' # Tambahan: Weekly winner tiap Senin 00:00 UTC
+    - cron: '0 0 * * 1'
   workflow_dispatch:
 
 jobs:
   generate-level:
-    if: github.event.schedule != '0 0 * * 1' # Hanya jalan kalau BUKAN weekly winner
+    if: github.event.schedule != '0 0 * * 1'
     name: 🌟 Generate Cool Level
     runs-on: ubuntu-latest
 
@@ -141,22 +141,25 @@ jobs:
           curl "$SHEETBEST_URL" > global_leaderboard.json
 
           NOTIF_COUNTER="${{ env.NOTIF_COUNTER }}"
+          # Hitung score user sekarang
+          SCORE_SELF=$(jq -r --arg user "${{ github.actor }}" '[.[] | select(.user==$user)] | length' global_leaderboard.json)
+          echo "SCORE_SELF=$SCORE_SELF" >> $GITHUB_ENV
 
-          leaderboard=$(jq -r --arg score "$NOTIF_COUNTER" '
+          leaderboard=$(jq -r '
             group_by(.user)
-            | map({user: .[0].user, last_level: .[-1].level})
-            | sort_by(.user)
+            | map({user: .[0].user, last_level: .[-1].level, score: length})
+            | sort_by(-.score, .user)
             | .[:10]
             | to_entries
             | map(
               if .key == 0 then
-                "1. 🟥 \(.value.user) [\(.value.last_level) | Score: \($score)]"
+                "1. 🟥 \(.value.user) [\(.value.last_level) | Score: \(.value.score)]"
               elif .key == 1 then
-                "2. 🟧 \(.value.user) [\(.value.last_level) | Score: \($score)]"
+                "2. 🟧 \(.value.user) [\(.value.last_level) | Score: \(.value.score)]"
               elif .key == 2 then
-                "3. 🟨 \(.value.user) [\(.value.last_level) | Score: \($score)]"
+                "3. 🟨 \(.value.user) [\(.value.last_level) | Score: \(.value.score)]"
               else
-                "\(.key+1). 🟪 \(.value.user) [\(.value.last_level) | Score: \($score)]"
+                "\(.key+1). 🟪 \(.value.user) [\(.value.last_level) | Score: \(.value.score)]"
               end
             )
             | join("\n")
@@ -193,6 +196,7 @@ jobs:
             <b>• 🌐 Git Repo :</b> <b>${{ github.repository }}</b>
             <b>• ⏳ Deployed At :</b> <b>${{ env.FORMATTED_TIME }}</b>
             <b>• 🧾 CI Run # :</b> <b>${{ env.NOTIF_COUNTER }}</b>
+            <b>• 🏅 Score :</b> <b>${{ env.SCORE_SELF }}</b>
             <b>• 🔐 Commit Auth :</b> <b>ethellyneera@gmail.com</b>
 
             <b>🏅 Leaderboard (Top 10 Global):</b>
@@ -222,7 +226,7 @@ jobs:
           git push
 
   announce-weekly-winner:
-    if: github.event.schedule == '0 0 * * 1' # Hanya jalan jika weekly winner
+    if: github.event.schedule == '0 0 * * 1'
     name: 🏅 Weekly Winner Announcement
     runs-on: ubuntu-latest
     steps:
