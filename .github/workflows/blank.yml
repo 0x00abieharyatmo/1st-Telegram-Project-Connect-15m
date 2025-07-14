@@ -212,8 +212,8 @@ jobs:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
             <b>╔═══🌌══════════🌌═══╗</b>
-            <b>   🐉<b>SPIRIT VEINS AWAKENED</b>🐉  </b>
-            <b> 🏮<b>IMMORTAL SEAL UNLOCKED</b>🏮 </b>
+            <b>  🐉<b>SPIRIT VEINS AWAKENED</b>🐉  </b>
+            <b>🏮<b>IMMORTAL SEAL UNLOCKED</b>🏮 </b>
             <b>     🍃QI FLOW HARMONIZED🍃  </b>
             <b>╚═══🌌══════════🌌═══╝</b>
 
@@ -234,7 +234,6 @@ jobs:
             <b>Script by Abie Haryatmo</b>
 
             <b>🌟 Fun Fact:</b>
-            Did you know? Octopuses have three hearts and blue blood. Two of the hearts pump blood to the gills, while the third pumps it to the rest of the body. The blue color comes from a copper-based molecule called hemocyanin, which is more efficient than hemoglobin for transporting oxygen in cold and low-oxygen environments.
 
           format: html
 
