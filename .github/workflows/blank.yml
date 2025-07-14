@@ -3,12 +3,12 @@ name: 🚀 Auto Cool Level Generator & Weekly Winner
 on:
   schedule:
     - cron: '*/15 * * * *'
-    - cron: '0 0 * * 1'
+    - cron: '0 0 * * 1' # Tambahan: Weekly winner tiap Senin 00:00 UTC
   workflow_dispatch:
 
 jobs:
   generate-level:
-    if: github.event.schedule != '0 0 * * 1'
+    if: github.event.schedule != '0 0 * * 1' # Hanya jalan kalau BUKAN weekly winner
     name: 🌟 Generate Cool Level
     runs-on: ubuntu-latest
 
@@ -79,7 +79,7 @@ jobs:
           {
             echo "# 🌌 Level: $next_name"
             echo "# Generated at: $(date -u)"
-            echo "# By: abieharyatmo01@gmail.com"
+            echo "# By: ethellyneera@gmail.com"
           } > "$file_name"
 
           echo "LEVEL_NAME=$next_name" >> $GITHUB_ENV
@@ -88,6 +88,12 @@ jobs:
       - name: ⏰ Generate Formatted Time
         run: |
           echo "FORMATTED_TIME=$(TZ='Asia/Jakarta' date '+%d/%m/%Y %H:%M:%S WIB')" >> $GITHUB_ENV
+
+      - name: 🔢 Generate Notification Counter
+        id: notif-counter
+        run: |
+          count=$(ls levels/level-*-*.txt 2>/dev/null | wc -l)
+          echo "NOTIF_COUNTER=$count" >> $GITHUB_ENV
 
       - name: 🏆 Update Leaderboard
         run: |
@@ -134,30 +140,27 @@ jobs:
           sudo apt-get update && sudo apt-get install -y jq
           curl "$SHEETBEST_URL" > global_leaderboard.json
 
-          # Hitung score setiap user dari global leaderboard
-          leaderboard=$(jq -r '
+          NOTIF_COUNTER="${{ env.NOTIF_COUNTER }}"
+
+          leaderboard=$(jq -r --arg score "$NOTIF_COUNTER" '
             group_by(.user)
-            | map({user: .[0].user, score: length, last_level: .[-1].level})
-            | sort_by(-.score, .user)
+            | map({user: .[0].user, last_level: .[-1].level})
+            | sort_by(.user)
             | .[:10]
             | to_entries
             | map(
               if .key == 0 then
-                "1. 🟥 \(.value.user) [\(.value.last_level) | Score: \(.value.score)]"
+                "1. 🟥 \(.value.user) [\(.value.last_level) | Score: \($score)]"
               elif .key == 1 then
-                "2. 🟧 \(.value.user) [\(.value.last_level) | Score: \(.value.score)]"
+                "2. 🟧 \(.value.user) [\(.value.last_level) | Score: \($score)]"
               elif .key == 2 then
-                "3. 🟨 \(.value.user) [\(.value.last_level) | Score: \(.value.score)]"
+                "3. 🟨 \(.value.user) [\(.value.last_level) | Score: \($score)]"
               else
-                "\(.key+1). 🟪 \(.value.user) [\(.value.last_level) | Score: \(.value.score)]"
+                "\(.key+1). 🟪 \(.value.user) [\(.value.last_level) | Score: \($score)]"
               end
             )
             | join("\n")
           ' global_leaderboard.json)
-
-          # Score (jumlah level) user saat ini
-          SCORE_SELF=$(jq -r --arg user "${{ github.actor }}" '[.[] | select(.user==$user)] | length' global_leaderboard.json)
-          echo "SCORE_SELF=$SCORE_SELF" >> $GITHUB_ENV
 
           if [ -z "$leaderboard" ] || [ "$leaderboard" == "null" ]; then
             leaderboard="Belum ada data leaderboard"
@@ -180,20 +183,17 @@ jobs:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
-            <pre>
-╔═══🗃️══════════🗃️═══╗
-     🗂️DATABASE MIGRATED🗂️  
- 🔒SECURITY PATCH APPLIED🔒 
-    💾BACKUPS COMPLETED💾  
-╚═══🗃️══════════🗃️═══╝
-            </pre>
+            <b>╔═══🗃️══════════🗃️═══╗</b>
+            <b>     🗂️<b>DATABASE MIGRATED</b>🗂️  </b>
+            <b> 🔒<b>SECURITY PATCH APPLIED</b>🔒 </b>
+            <b>    💾BACKUPS COMPLETED💾  </b>
+            <b>╚═══🗃️══════════🗃️═══╝</b>
 
             <b>• 🧩 Feature ID :</b> <b>${{ env.LEVEL_NAME }}</b>
             <b>• 🌐 Git Repo :</b> <b>${{ github.repository }}</b>
             <b>• ⏳ Deployed At :</b> <b>${{ env.FORMATTED_TIME }}</b>
-            <b>• 🏷️ CI Run No :</b> <b>${{ github.run_number }}</b>
-            <b>• 🧾 Score :</b> <b>${{ env.SCORE_SELF }}</b>
-            <b>• 🔐 Commit Auth :</b> <b>abieharyatmo01@gmail.com</b>
+            <b>• 🧾 CI Run # :</b> <b>${{ env.NOTIF_COUNTER }}</b>
+            <b>• 🔐 Commit Auth :</b> <b>ethellyneera@gmail.com</b>
 
             <b>🏅 Leaderboard (Top 10 Global):</b>
             <pre>${{ env.LEADERBOARD_GLOBAL }}</pre>
@@ -205,8 +205,8 @@ jobs:
 
       - name: 🤖 Configure Git
         run: |
-          git config user.name "abieharyatmo01"
-          git config user.email "abieharyatmo01@gmail.com"
+          git config user.name "ethellyneera"
+          git config user.email "ethellyneera@gmail.com"
 
       - name: 🚩 Commit & Push Changes (Auto-resolve Conflict)
         run: |
@@ -222,7 +222,7 @@ jobs:
           git push
 
   announce-weekly-winner:
-    if: github.event.schedule == '0 0 * * 1'
+    if: github.event.schedule == '0 0 * * 1' # Hanya jalan jika weekly winner
     name: 🏅 Weekly Winner Announcement
     runs-on: ubuntu-latest
     steps:
