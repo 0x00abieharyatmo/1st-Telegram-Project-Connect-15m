@@ -1,12 +1,14 @@
-name: 🚀 Auto Cool Level Generator
+name: 🚀 Auto Cool Level Generator & Weekly Winner
 
 on:
   schedule:
     - cron: '*/15 * * * *'
+    - cron: '0 0 * * 1' # Weekly winner tiap Senin 00:00 UTC
   workflow_dispatch:
 
 jobs:
   generate-level:
+    if: github.event.schedule != '0 0 * * 1'
     name: 🌟 Generate Cool Level
     runs-on: ubuntu-latest
 
@@ -137,32 +139,39 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y jq
           curl "$SHEETBEST_URL" > global_leaderboard.json
-          echo "Isi global_leaderboard.json:"
-          cat global_leaderboard.json
 
-          CI_SCORE=$(grep ^NOTIF_COUNTER= $GITHUB_ENV | cut -d'=' -f2)
-          ACTOR="${{ github.actor }}"
+          NOTIF_COUNTER="${{ env.NOTIF_COUNTER }}"
 
-          leaderboard=$(jq -r --arg ci_score "$CI_SCORE" --arg actor "$ACTOR" '
-            map(select(.user != null and .user != "" and .user != "null"))
-            | group_by(.user)
-            | map({user: .[0].user, count: length})
-            | sort_by(-.count, .user)
-            | .[:5]
+          leaderboard=$(jq -r --arg score "$NOTIF_COUNTER" '
+            group_by(.user)
+            | map({user: .[0].user, last_level: .[-1].level})
+            | sort_by(.user)
+            | .[:10]
             | to_entries
             | map(
-                if .value.value.user == $actor
-                then "\(.key+1). \(.value.value.user) [\(.value.value.count) | Score: \($ci_score)]"
-                else "\(.key+1). \(.value.value.user) [\(.value.value.count)]"
-                end
-              )
-            | join("<br />")
+              if .key == 0 then
+                "1. 🟥 \(.value.user) [\(.value.last_level) | Score: \($score)]"
+              elif .key == 1 then
+                "2. 🟧 \(.value.user) [\(.value.last_level) | Score: \($score)]"
+              elif .key == 2 then
+                "3. 🟨 \(.value.user) [\(.value.last_level) | Score: \($score)]"
+              else
+                "\(.key+1). 🟪 \(.value.user) [\(.value.last_level) | Score: \($score)]"
+              end
+            )
+            | join("\n")
           ' global_leaderboard.json)
-          if [ -z "$leaderboard" ] || [[ "$leaderboard" == *null* ]]; then
+
+          if [ -z "$leaderboard" ] || [ "$leaderboard" == "null" ]; then
             leaderboard="Belum ada data leaderboard"
           fi
-          echo "LEADERBOARD_GLOBAL=$leaderboard" >> $GITHUB_ENV
-          echo "LEADERBOARD_GLOBAL: $leaderboard"
+
+          echo "LEADERBOARD_GLOBAL<<EOF" >> $GITHUB_ENV
+          echo "$leaderboard" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+          echo "LEADERBOARD_GLOBAL:"
+          echo "$leaderboard"
 
       - name: DEBUG Print LEADERBOARD_GLOBAL
         run: |
@@ -186,7 +195,7 @@ jobs:
             <b>• 🧾 CI Run # :</b> <b>${{ env.NOTIF_COUNTER }}</b>
             <b>• 🔐 Commit Auth :</b> <b>abieharyatmo01@gmail.com</b>
 
-            <b>🏅 Leaderboard (Top 5 Global):</b>
+            <b>🏅 Leaderboard (Top 10 Global):</b>
             <pre>${{ env.LEADERBOARD_GLOBAL }}</pre>
 
             <b>#DeployLikeAPro #DevOpsMode</b>
@@ -211,3 +220,63 @@ jobs:
             git pull --no-rebase
           }
           git push
+
+  announce-weekly-winner:
+    if: github.event.schedule == '0 0 * * 1'
+    name: 🏅 Weekly Winner Announcement
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch Leaderboard Data
+        env:
+          SHEETBEST_URL: ${{ secrets.SHEETBEST_URL }}
+        run: |
+          sudo apt-get update && sudo apt-get install -y jq
+          curl "$SHEETBEST_URL" > global_leaderboard.json
+
+          week_start=$(date -u -d 'last monday' +%Y-%m-%d)
+          week_end=$(date -u +%Y-%m-%d)
+
+          winner=$(jq -r --arg start "$week_start" --arg end "$week_end" '
+            [ .[] | select(.timestamp >= ($start + "T00:00:00Z") and .timestamp < ($end + "T00:00:00Z")) ]
+            | group_by(.user)
+            | map({user: .[0].user, score: length})
+            | max_by(.score) // default if empty
+          ' global_leaderboard.json)
+
+          user=$(echo "$winner" | jq -r .user)
+          score=$(echo "$winner" | jq -r .score)
+
+          badge=""
+          if [ "$user" != "null" ] && [ -n "$user" ]; then
+            total_score=$(jq -r --arg user "$user" '
+              [ .[] | select(.user == $user) ] | length
+            ' global_leaderboard.json)
+
+            if [ "$total_score" -ge 50 ]; then
+              badge="🏆 <b>LEGEND</b>"
+            elif [ "$total_score" -ge 25 ]; then
+              badge="⭐ <b>MASTER</b>"
+            elif [ "$total_score" -ge 10 ]; then
+              badge="🔥 <b>EXPERT</b>"
+            elif [ "$total_score" -ge 5 ]; then
+              badge="🌟 <b>RISING STAR</b>"
+            elif [ "$total_score" -ge 1 ]; then
+              badge="✨ <b>NEWBIE</b>"
+            fi
+          fi
+
+          if [ "$user" == "null" ] || [ -z "$user" ]; then
+            msg="Tidak ada kontributor dalam minggu ini."
+          else
+            msg="🏆 <b>Weekly Winner</b> (Periode $week_start s/d $(date -u -d "$week_end -1 day" +%Y-%m-%d)):\n\n<b>$user</b> dengan <b>$score</b> level!\n$badge"
+          fi
+
+          echo "$msg" > winner_message.txt
+
+      - name: Send Telegram Announcement
+        uses: appleboy/telegram-action@v0.1.0
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message_file: winner_message.txt
+          format: html
