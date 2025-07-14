@@ -19,11 +19,11 @@ jobs:
       - name: ✨ Cultivation System Banner
         run: |
           echo ""
-          echo "╔═══🗃️══════════🗃️═══╗"
-          echo "     🗂️DATABASE MIGRATED🗂️  "
-          echo "  🔒SECURITY PATCH APPLIED🔒 "
-          echo "    💾BACKUPS COMPLETED💾  "
-          echo "╚═══🗃️══════════🗃️═══╝"
+          echo "╔═══🌌══════════🌌═══╗"
+          echo "     🐉SPIRIT VEINS AWAKENED🐉  "
+          echo "  🏮IMMORTAL SEAL UNLOCKED🏮 "
+          echo "    🍃QI FLOW HARMONIZED🍃  "
+          echo "╚═══🌌══════════🌌═══╝"
           echo ""
 
       - name: 📝 Generate Next Cultivation Level
@@ -211,19 +211,19 @@ jobs:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
-            <b>╔═══🗃️══════════🗃️═══╗</b>
-            <b>     🗂️<b>DATABASE MIGRATED</b>🗂️  </b>
-            <b> 🔒<b>SECURITY PATCH APPLIED</b>🔒 </b>
-            <b>    💾BACKUPS COMPLETED💾  </b>
-            <b>╚═══🗃️══════════🗃️═══╝</b>
+            <b>╔═══🌌══════════🌌═══╗</b>
+            <b>     🐉<b>SPIRIT VEINS AWAKENED</b>🐉  </b>
+            <b> 🏮<b>IMMORTAL SEAL UNLOCKED</b>🏮 </b>
+            <b>    🍃QI FLOW HARMONIZED🍃  </b>
+            <b>╚═══🌌══════════🌌═══╝</b>
 
-            <b>• 🔁 CI_RUN :</b> <code>${{ env.NOTIF_COUNTER }}</code>
-            <b>• 🏅 DEV_SCORE :</b> <code>${{ env.SCORE_SELF }}</code>
-            <b>• 📂 REPO_OWNER :</b> <code>${{ github.repository_owner }}</code>
-            <b>• ⏱️ BUILD_AT :</b> <code>${{ env.FORMATTED_TIME }}</code>
+            <b>• 🔁 TRIAL_RUN :</b> <code>${{ env.NOTIF_COUNTER }}</code>
+            <b>• 🏅 CULTIVATOR_SCORE :</b> <code>${{ env.SCORE_SELF }}</code>
+            <b>• 🏯 SECT_OWNER :</b> <code>${{ github.repository_owner }}</code>
+            <b>• ⏱️ TIME_OF_ASCENSION :</b> <code>${{ env.FORMATTED_TIME }}</code>
 
-            <b>• 🧩 LEVEL_ID :</b> <code>${{ env.LEVEL_NAME }}</code>
-            <b>• 👤 AUTHOR :</b> <code>abieharyatmo01@gmail.com</code>
+            <b>• 🧩 CULTIVATION_STAGE :</b> <code>${{ env.LEVEL_NAME }}</code>
+            <b>• 👤 IMMORTAL_NAME :</b> <code>abieharyatmo01@gmail.com</code>
 
             <b>🏆 <u>LEADERBOARD (TOP 10 GLOBAL)</u> 🏆</b>
             ━━━━━━━━━━━━━━━━━━━━━━
