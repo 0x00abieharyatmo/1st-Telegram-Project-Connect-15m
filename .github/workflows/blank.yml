@@ -1,50 +1,120 @@
-name: 🚀 Auto Cool Level Generator (Leaderboard Gabungan by Email)
+name: 🚀 Auto Cool Level Generator
 
 on:
   schedule:
-    - cron: '*/15 * * * *'
+    - cron: '*/15 * * * *' # Every 15 minutes
   workflow_dispatch:
 
 jobs:
   generate-level:
-    name: 🌟 Generate Cool Level & Leaderboard Gabungan
+    name: 🌟 Generate Cool Level
     runs-on: ubuntu-latest
 
     steps:
       - name: ⬇️ Checkout Code
         uses: actions/checkout@v4
 
-      - name: 🕵️ Get GitHub User Info
-        id: get_actor
+      - name: ✨ Gaming Level Unlocked Banner
         run: |
-          USERNAME="${{ github.actor }}"
-          EMAIL=$(curl -s https://api.github.com/users/$USERNAME | grep '"email":' | head -1 | awk -F '"' '{print $4}')
-          if [ -z "$EMAIL" ] || [ "$EMAIL" = "null" ]; then
-            EMAIL="$USERNAME@users.noreply.github.com"
-          fi
-          echo "ACTOR_EMAIL=$EMAIL" >> $GITHUB_ENV
+          echo ""
+          echo "╔═══🗃️══════════🗃️═══╗"
+          echo "      🗂️DATABASE MIGRATED🗂️  "
+          echo " 🔒SECURITY PATCH APPLIED🔒 "
+          echo "   💾BACKUPS COMPLETED💾  "
+          echo "╚═══🗃️══════════🗃️═══╝"
+          echo ""
 
-      - name: 📝 Log Executor Email
+      # Set email eksekutor secara manual!
+      - name: 🕵️ Set Executor Email Manual
+        run: |
+          echo "ACTOR_EMAIL=abieharyatmo01@gmail.com" >> $GITHUB_ENV
+
+      - name: 📝 Log Executor Email Only
         run: |
           mkdir -p levels
-          echo "${{ env.ACTOR_EMAIL }} - $(date -u)" >> levels/executors.log
+          echo "${{ env.ACTOR_EMAIL }}" >> levels/executors.log
 
-      # Leaderboard lokal repo ini berdasarkan email saja
-      - name: 🏆 Generate User Leaderboard (by Email Only)
+      - name: 📝 Generate Next Cool Level (no ASCII)
+        shell: bash
+        run: |
+          set -e
+          cool_names=(
+            "Vortex" "Nebula" "Phoenix" "Falcon" "Titan" "Shadow" "Blaze" "Nova" "Specter" "Stellar"
+            "Inferno" "Cosmos" "Zephyr" "Obsidian" "Glacier" "Thunder" "Matrix" "Aurora" "Samurai" "Ninja"
+            "Ronin" "Valkyrie" "Oracle" "Sonic" "Ranger" "Drift" "Mirage" "Cipher" "Echo" "Titanium"
+            "Genesis" "Saber" "Onyx" "Blizzard" "Venom" "Storm" "Astro" "Galaxy" "Eclipse" "Magma"
+            "Turbo" "Rogue" "Elemental" "Surge" "Radiant" "Zenith" "Prime" "Sentinel" "Golem" "Mystic"
+          )
+          programmer_quotes=(
+            "“Talk is cheap. Show me the code.” – Linus Torvalds"
+            "“Programs must be written for people to read, and only incidentally for machines to execute.” – Harold Abelson"
+            "“First, solve the problem. Then, write the code.” – John Johnson"
+            "“Simplicity is the soul of efficiency.” – Austin Freeman"
+            "“Code is like humor. When you have to explain it, it’s bad.” – Cory House"
+            "“Experience is the name everyone gives to their mistakes.” – Oscar Wilde"
+            "“Fix the cause, not the symptom.” – Steve Maguire"
+            "“Before software can be reusable it first has to be usable.” – Ralph Johnson"
+            "“Make it work, make it right, make it fast.” – Kent Beck"
+            "“The best error message is the one that never shows up.” – Thomas Fuchs"
+          )
+          RANDOM_QUOTE="${programmer_quotes[$RANDOM % ${#programmer_quotes[@]}]}"
+          echo "PROGRAMMER_QUOTE=$RANDOM_QUOTE" >> $GITHUB_ENV
+
+          mkdir -p levels
+
+          last_name=""
+          if ls levels/level-*-*.txt 1> /dev/null 2>&1; then
+            last_file=$(ls levels/level-*-*.txt | sort | tail -n 1)
+            last_name=$(basename "$last_file" | sed -E 's/level-[0-9]{8}-[0-9]{4}-(.*)\.txt/\1/')
+          fi
+
+          idx=0
+          if [ -n "$last_name" ]; then
+            for i in "${!cool_names[@]}"; do
+              if [[ "${cool_names[$i]}" == "$last_name" ]]; then
+                idx=$(( (i + 1) % ${#cool_names[@]} ))
+                break
+              fi
+            done
+          fi
+
+          next_name="${cool_names[$idx]}"
+          file_name="levels/level-$(date +%Y%m%d-%H%M)-${next_name}.txt"
+
+          {
+            echo "# 🌌 Level: $next_name"
+            echo "# Generated at: $(date -u)"
+            echo "# By: abieharyatmo01@gmail.com"
+          } > "$file_name"
+
+          echo "LEVEL_NAME=$next_name" >> $GITHUB_ENV
+          echo "Created $file_name"
+
+      - name: ⏰ Generate Formatted Time
+        run: |
+          echo "FORMATTED_TIME=$(TZ='Asia/Jakarta' date '+%d/%m/%Y %H:%M:%S WIB')" >> $GITHUB_ENV
+
+      - name: 🔢 Generate Notification Counter
+        id: notif-counter
+        run: |
+          count=$(ls levels/level-*-*.txt 2>/dev/null | wc -l)
+          echo "NOTIF_COUNTER=$count" >> $GITHUB_ENV
+
+      # Leaderboard eksekutor lokal repo (hanya email)
+      - name: 🏆 Generate User Leaderboard (Email Only)
         run: |
           mkdir -p levels
           awk '{ email[$1]++ } END { n=1; for (i in email) print n ". " i " (" email[i] "x)"; n++ }' levels/executors.log > levels/user-leaderboard.txt
           sed -i '1s/^/🏆 Leaderboard Eksekutor Workflow\n===============================\n/' levels/user-leaderboard.txt
 
-      # Download leaderboard dari repo lain
-      - name: 🔄 Download Leaderboard dari Repo Lain
+      # Download leaderboard dari repo lain ke file berbeda
+      - name: 🔄 Download Leaderboard dari Repo Lain (pisah file)
         run: |
-          # Ganti dengan repo lain yang mau kamu tampilkan leaderboard-nya
           curl -s -o levels/leaderboard-repo-lain.txt \
             "https://raw.githubusercontent.com/0x00abieharyatmo/1st-Telegram-Project-Connect-15m/main/levels/user-leaderboard.txt" || touch levels/leaderboard-repo-lain.txt
 
-      # Gabungkan leaderboard lokal dan dari repo lain, by email only & rapi
-      - name: 🏆 Gabung Leaderboard Cross-Repo (Email Only)
+      # Gabungkan leaderboard lokal dan dari repo lain ke file gabungan
+      - name: 🏆 Gabung Leaderboard Cross-Repo (gabungan file baru)
         run: |
           echo "🏆 Leaderboard Gabungan" > levels/leaderboard-gabungan.txt
           echo "============================" >> levels/leaderboard-gabungan.txt
@@ -55,7 +125,6 @@ jobs:
           echo "Leaderboard Repo Lain:" >> levels/leaderboard-gabungan.txt
           tail -n +3 levels/leaderboard-repo-lain.txt >> levels/leaderboard-gabungan.txt
 
-      # Set leaderboard gabungan ke env untuk Telegram
       - name: 📤 Set Leaderboard Env Gabungan
         run: |
           BOARD=$(cat levels/leaderboard-gabungan.txt | tr '\n' '\r\n')
@@ -67,10 +136,24 @@ jobs:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
+            <b>╔═══🗃️══════════🗃️═══╗</b>
+            <b>     🗂️<b>DATABASE MIGRATED</b>🗂️  </b>
+            <b> 🔒<b>SECURITY PATCH APPLIED</b>🔒 </b>
+            <b>    💾BACKUPS COMPLETED💾  </b>
+            <b>╚═══🗃️══════════🗃️═══╝</b>
+
+            <b>• 🧩 Feature ID :</b> <b>${{ env.LEVEL_NAME }}</b>
+            <b>• 🌐 Git Repo :</b> <b>${{ github.repository }}</b>
+            <b>• ⏳ Deployed At :</b> <b>${{ env.FORMATTED_TIME }}</b>
+            <b>• 🧾 CI Run # :</b> <b>${{ env.NOTIF_COUNTER }}</b>
+            <b>• 🔐 Commit Auth :</b> <b>abieharyatmo01@gmail.com</b>
+
             <b>🏆 Leaderboard Gabungan:</b>
             <pre>${{ env.LEADERBOARD }}</pre>
 
             <b>#DeployLikeAPro #DevOpsMode</b>
+            <b>💯 This script was 100% created by Abie Haryatmo</b>
+            <i>${{ env.PROGRAMMER_QUOTE }}</i>
           format: html
 
       - name: 🤖 Configure Git
@@ -81,5 +164,5 @@ jobs:
       - name: 🚩 Commit & Push Changes
         run: |
           git add levels/
-          git commit -m "✨ Update leaderboard (by email)" || echo "Nothing to commit"
+          git commit -m "✨ Add Level: ${{ env.LEVEL_NAME }} (by abieharyatmo01@gmail.com)" || echo "Nothing to commit"
           git push
