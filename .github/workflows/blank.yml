@@ -100,24 +100,36 @@ jobs:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
-  <b>╔═══🗃️══════════🗃️═══╗</b>
-  <b>     🗂️ DATABASE MIGRATED 🗂️  </b>
-  <b>     🔒 SECURITY PATCH APPLIED 🔒 </b>
-  <b>     💾 BACKUPS COMPLETED 💾  </b>
-  <b>╚═══🗃️══════════🗃️═══╝</b>
+            <b>╔═══🗃️══════════🗃️═══╗</b>
+            <b>     🗂️ DATABASE MIGRATED 🗂️  </b>
+            <b>     🔒 SECURITY PATCH APPLIED 🔒 </b>
+            <b>     💾 BACKUPS COMPLETED 💾  </b>
+            <b>╚═══🗃️══════════🗃️═══╝</b>
 
-  <b>• 🧩 Feature ID :</b> <b>${{ env.LEVEL_NAME }}</b>
-  <b>• 📄 File Baru :</b> <b>${{ env.LEVEL_FILE_NAME }}</b>
-  <b>• 🌐 Git Repo :</b> <b>${{ github.repository }}</b>
-  <b>• ⏳ Deployed At :</b> <b>${{ env.FORMATTED_TIME }}</b>
-  <b>• 🧾 CI Run # :</b> <b>${{ env.NOTIF_COUNTER }}</b>
-  <b>• 🔐 Commit Auth :</b> <b>Auto Cool Level Generator</b>
+            <b>• 🧩 Feature ID :</b> <b>${{ env.LEVEL_NAME }}</b>
+            <b>• 📄 File Baru :</b> <b>${{ env.LEVEL_FILE_NAME }}</b>
+            <b>• 🌐 Git Repo :</b> <b>${{ github.repository }}</b>
+            <b>• ⏳ Deployed At :</b> <b>${{ env.FORMATTED_TIME }}</b>
+            <b>• 🧾 CI Run # :</b> <b>${{ env.NOTIF_COUNTER }}</b>
+            <b>• 🔐 Commit Auth :</b> <b>Auto Cool Level Generator</b>
 
-  <b>#DeployLikeAPro #DevOpsMode</b>
-  <b>💯 This script was 100% created by Abie Haryatmo</b>
-  <i>${{ env.PROGRAMMER_QUOTE }}</i>
+            <b>#DeployLikeAPro #DevOpsMode</b>
+            <b>💯 This script was 100% created by Abie Haryatmo</b>
+            <i>${{ env.PROGRAMMER_QUOTE }}</i>
 
-  <b>🟢 Untuk menjalankan workflow ini secara manual,</b>
-  <b>cukup <u>kirim perintah</u>:</b>
-  <code>run</code>
-  <b>di aplikasi Telegram kamu!</b>
+            <b>🟢 Untuk menjalankan workflow ini secara manual,</b>
+            <b>cukup <u>kirim perintah</u>:</b>
+            <code>run</code>
+            <b>di aplikasi Telegram kamu!</b>
+          format: html
+
+      - name: 🤖 Configure Git
+        run: |
+          git config user.name "0x00abieharyatmo"
+          git config user.email "abieharyatmo01@gmail.com"
+
+      - name: 🚩 Commit & Push Changes
+        run: |
+          git add levels/
+          git commit -m "✨ Add Level: ${{ env.LEVEL_NAME }} (by Auto Cool Level Generator)" || echo "Nothing to commit"
+          git push
