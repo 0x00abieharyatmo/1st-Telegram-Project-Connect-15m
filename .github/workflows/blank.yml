@@ -230,10 +230,178 @@ jobs:
             <pre>${{ env.LEADERBOARD_GLOBAL }}</pre>
             ━━━━━━━━━━━━━━━━━━━━━━
 
-            <b>#Cultivation #DevOpsMode</b>
-            <b>Script by Abie Haryatmo</b>
+            <b>#DaoHeartUnbroken #DevOpsCultivation</b>
+            <b>Script by Abie Haryatmo, Guardian of the Sect</b>
+            <b>🌌 "The immortal journey of cultivation in the DevOps realm continues..." 🌌</b>
 
-            <b>🌟 Fun Fact:</b>
+            <b>🌟 100 Fun Facts about Donghua 🌟</b>
+            <ol>
+            <li>Donghua is the Chinese term for animation, similar to anime in Japan.</li>
+            <li>One of the earliest Chinese animations is "Uproar in the Studio" from 1926.</li>
+            <li>“The King of Fighters: Destiny” is a donghua based on a popular video game franchise.</li>
+            <li>“The King's Avatar” (Quan Zhi Gao Shou) helped popularize e-sports themed donghua internationally.</li>
+            <li>Many donghua are adapted from web novels and manhua (Chinese comics).</li>
+            <li>Fog Hill of Five Elements is praised for its unique art and fluid animation style.</li>
+            <li>Mo Dao Zu Shi (Grandmaster of Demonic Cultivation) is one of the most famous donghua worldwide.</li>
+            <li>Chinese cultivation (xianxia) and martial arts (wuxia) themes are very common in donghua.</li>
+            <li>The first full-length Chinese animated feature is "Princess Iron Fan" (1941).</li>
+            <li>Some donghua are based on historical legends and Chinese mythology.</li>
+            <li>“Soul Land” (Douluo Dalu) is one of the longest-running and most-watched donghua series.</li>
+            <li>Donghua often incorporates traditional Chinese music and instruments in their soundtracks.</li>
+            <li>Many donghua studios use 3D CGI, blending it with 2D art styles.</li>
+            <li>Donghua are not just for children; many target teens and adults with complex plots.</li>
+            <li>China has a growing fanbase for both domestic and Japanese animation.</li>
+            <li>“White Snake” (2019) is a donghua film that received international critical acclaim.</li>
+            <li>Some donghua are released on global platforms like Netflix and Bilibili.</li>
+            <li>“Heaven Official’s Blessing” (Tian Guan Ci Fu) is another donghua that gained worldwide fans.</li>
+            <li>Voice actors in donghua, known as "seiyuu" in Japan, are called “peiyin” in China.</li>
+            <li>Donghua can be categorized into genres like xianxia, wuxia, sci-fi, romance, and slice of life.</li>
+            <li>Chinese donghua can be produced by both big studios and small independent teams.</li>
+            <li>Unlike Japanese anime, donghua often adapts novels from Qidian, 17k, or JJWXC platforms.</li>
+            <li>“Big Fish & Begonia” (2016) drew international praise for its beautiful visuals and folklore-inspired story.</li>
+            <li>Some donghua are BL (Boys' Love) themed, like "Heaven Official’s Blessing" and "Mo Dao Zu Shi".</li>
+            <li>Donghua series sometimes have seasons with as few as 12 or as many as 52 episodes per year.</li>
+            <li>China has its own "anime convention" culture, and donghua voice actors often appear at events.</li>
+            <li>Popular donghua streaming platforms include Bilibili, Tencent Video, and iQIYI.</li>
+            <li>Donghua producers sometimes collaborate with Japanese studios for co-productions.</li>
+            <li>“Scissor Seven” is a donghua with a unique comedic style that became a hit on Netflix.</li>
+            <li>Chinese censorship sometimes impacts how romance and violence are portrayed in donghua.</li>
+            <li>There are donghua for all ages, from early childhood to mature/adult themes.</li>
+            <li>Some donghua are famous for their opening and ending songs, performed by celebrated C-pop artists.</li>
+            <li>Chinese fans often create subtitles and dubs to share donghua with international audiences.</li>
+            <li>“Link Click” (Shiguang Dailiren) amazed fans worldwide with its tight storytelling and emotional depth.</li>
+            <li>Many donghua are set in fantasy worlds inspired by Chinese myths, dynasties, and fairy tales.</li>
+            <li>Donghua movies are increasingly competing at international film festivals.</li>
+            <li>Some donghua are made in both Mandarin and regional dialects, like Cantonese or Shanghainese.</li>
+            <li>Donghua studios are experimenting with VR and AR for immersive storytelling experiences.</li>
+            <li>“White Cat Legend” is a historical comedy donghua with a devoted fanbase.</li>
+            <li>Cosplay of donghua characters is on the rise at conventions in and outside China.</li>
+            <li>Merchandise like figures, posters, and clothing for donghua is growing in popularity.</li>
+            <li>Some donghua have interactive games or mobile apps based on the story or characters.</li>
+            <li>Donghua is sometimes used for educational content, teaching history or language.</li>
+            <li>China’s “Golden Monkey Award” is a prestigious prize for animation, including donghua.</li>
+            <li>Donghua stories often explore themes of immortality, destiny, and martial brotherhood.</li>
+            <li>Many donghua openings feature calligraphy and ink painting to evoke traditional Chinese art.</li>
+            <li>Popular donghua can spawn live-action adaptations and stage plays.</li>
+            <li>Some donghua, like “The Founder of Diabolism”, have won awards for their animation and soundtracks.</li>
+            <li>Chinese animated shorts are often used as advertisements and social media campaigns.</li>
+            <li>Chinese New Year often brings special episodes or one-shots from famous donghua series.</li>
+            <li>There are donghua adapted from mobile games, such as “Honor of Kings: Chapter of Glory”.</li>
+            <li>Some donghua are based on real historical figures, mixing fact and fantasy.</li>
+            <li>“Rakshasa Street” blends supernatural action with urban fantasy settings.</li>
+            <li>Many donghua characters have names with poetic or symbolic meanings.</li>
+            <li>Some donghua feature animal spirits, gods, and demons, reflecting Chinese folklore.</li>
+            <li>Chinese animation festivals are held annually in cities like Hangzhou and Beijing.</li>
+            <li>Donghua series sometimes collaborate with pop idols for theme songs and promotions.</li>
+            <li>Chinese animation has influenced Japanese anime, and vice versa, over the decades.</li>
+            <li>Many donghua heroes are orphans who rise to greatness through perseverance and cultivation.</li>
+            <li>“The Legend of Hei” is a donghua movie loved for its heartwarming story and animation.</li>
+            <li>Some donghua are so popular that they inspire fanfiction, doujinshi, and fan art communities.</li>
+            <li>Donghua often features beautiful landscapes inspired by real Chinese mountains and rivers.</li>
+            <li>Some donghua are distributed on YouTube with official English subtitles.</li>
+            <li>Traditional Chinese philosophy and Confucian values often shape donghua plots.</li>
+            <li>Chinese animation studios are investing in AI to streamline their animation process.</li>
+            <li>Donghua is sometimes used as soft power for China’s cultural diplomacy.</li>
+            <li>The average production time for a donghua episode is about 2–6 months, depending on complexity.</li>
+            <li>Some donghua include after-credit scenes, teasing future episodes or jokes.</li>
+            <li>“Da Yu Hai Tang” (Big Fish & Begonia) took over 12 years to complete.</li>
+            <li>Many donghua feature intricate costume designs based on Hanfu and other traditional garments.</li>
+            <li>Some donghua studios release behind-the-scenes documentaries for fans.</li>
+            <li>Donghua has inspired Chinese fashion trends, especially among young people.</li>
+            <li>There are donghua about Chinese chess, like “The King's Avatar” with e-sports themes.</li>
+            <li>Popular donghua voice actors can have millions of social media followers.</li>
+            <li>Many donghua include Easter eggs referencing other series or Chinese pop culture.</li>
+            <li>Chinese web novel authors often participate in donghua adaptations of their works.</li>
+            <li>Some donghua episodes are only a few minutes long, like “Non-Human” (Fei Ren Zai).</li>
+            <li>3D donghua is more common in China than in Japan, especially for action scenes.</li>
+            <li>Some donghua are inspired by Western fairy tales, but with a Chinese twist.</li>
+            <li>Fans often create AMVs (Anime Music Videos) using donghua footage.</li>
+            <li>Donghua can be a gateway for international viewers to explore Chinese language and culture.</li>
+            <li>Some donghua are adapted into manhua (Chinese comics) after they gain popularity.</li>
+            <li>China’s animation industry is expected to keep growing rapidly over the next decade.</li>
+            <li>Donghua conventions sometimes have contests for best fan art or cosplay.</li>
+            <li>Some donghua use motion capture for realistic fight choreography.</li>
+            <li>Popular donghua sometimes have character songs sung by the voice actors themselves.</li>
+            <li>Chinese government sometimes funds donghua projects with cultural or educational value.</li>
+            <li>There are donghua about food and cooking, like “Cinderella Chef”.</li>
+            <li>Some donghua have unique art styles that set them apart from Japanese anime.</li>
+            <li>Donghua can be found dubbed in languages like English, Thai, Indonesian, and Russian.</li>
+            <li>Many donghua fans learn to read simplified Chinese characters to enjoy original content.</li>
+            <li>Some donghua are entirely silent, relying on visuals and music to tell the story.</li>
+            <li>“Monkey King: Hero is Back” was a box office hit and revived interest in classic tales.</li>
+            <li>Many donghua are released as web series before getting TV airtime.</li>
+            <li>Some donghua include special “chibi” or parody episodes for comic relief.</li>
+            <li>There are donghua focusing on science fiction and space exploration, like “The Three-Body Problem”.</li>
+            <li>Chinese animation often celebrates cultural festivals like Mid-Autumn or Dragon Boat Festival.</li>
+            <li>Donghua production is increasingly using cloud computing for collaboration.</li>
+            <li>Some donghua series have their own original card games or tabletop games.</li>
+            <li>Popular donghua sometimes inspire theme park attractions in China.</li>
+            <li>Many donghua series have official merchandise shops online and at conventions.</li>
+            <li>There are donghua that tackle social issues, like environmentalism or family dynamics.</li>
+            <li>Some donghua include real Chinese poetry and proverbs in their dialogue.</li>
+            <li>Many donghua have strong female leads—warriors, cultivators, or strategists.</li>
+            <li>Donghua studios often hold online polls to let fans vote for their favorite characters.</li>
+            <li>Some donghua creators are active on social media, interacting with fans directly.</li>
+            <li>There are donghua focused on sports, like basketball or soccer.</li>
+            <li>Some donghua are set in futuristic cyberpunk cities with Chinese characteristics.</li>
+            <li>Many donghua reflect the importance of friendship, loyalty, and sacrifice.</li>
+            <li>Donghua is a vibrant art form, evolving rapidly and gaining more fans around the world every year!</li>
+            </ol>
+
+            <b>🔥 Special Fun Facts: Renegade Immortal, BTTH, Soul Land & Top 10 Donghua! 🔥</b>
+            <ul>
+            <li><b>Renegade Immortal:</b> The donghua is adapted from Er Gen’s web novel, famous for its dark cultivation path and the legendary main character, Wang Lin.</li>
+            <li><b>Renegade Immortal:</b> Wang Lin’s journey explores harsh realities of immortality, loss, and fate, making it one of the most philosophical xianxia stories.</li>
+            <li><b>Renegade Immortal:</b> The story shares the same universe as "I Shall Seal the Heavens" and "A Will Eternal."</li>
+            <li><b>Renegade Immortal:</b> The donghua visualizes the transition between worlds and realms with vivid color themes for each arc.</li>
+            <li><b>Battle Through the Heavens (BTTH):</b> Known as “斗破苍穹” (Dou Po Cang Qiong), it’s one of the most-watched donghua series in China and internationally.</li>
+            <li><b>BTTH:</b> The main character, Xiao Yan, is voiced by Zhang Jie, who is also famous for other xianxia donghua roles.</li>
+            <li><b>BTTH:</b> Each season of BTTH features a new opening and ending song, often trending among donghua fans.</li>
+            <li><b>BTTH:</b> The story features a unique Dou Qi system, with colorful flames and fighting techniques unique to each clan.</li>
+            <li><b>BTTH:</b> BTTH has a successful mobile game adaptation with millions of downloads.</li>
+            <li><b>Soul Land:</b> Also known as “斗罗大陆” (Douluo Dalu), Soul Land broke viewership records on Chinese streaming platforms.</li>
+            <li><b>Soul Land:</b> Tang San’s Blue Silver Grass seems weak at first, but becomes his greatest strength, symbolizing perseverance.</li>
+            <li><b>Soul Land:</b> The donghua is known for its fluid 3D animation and epic spirit beast battles.</li>
+            <li><b>Soul Land:</b> Many fans ship the main couple, Tang San and Xiao Wu, whose bond is central to the story.</li>
+            <li><b>Soul Land:</b> The series regularly features special festival-themed episodes in China.</li>
+            <li><b>Donghua Top 10 (as of 2024):</b></li>
+            <ol>
+            <li>Mo Dao Zu Shi (Grandmaster of Demonic Cultivation) – for its deep story and stunning music.</li>
+            <li>Soul Land (Douluo Dalu) – popular for its world-building and long-running episodes.</li>
+            <li>Heaven Official’s Blessing (Tian Guan Ci Fu) – a global hit for BL fans and beautiful visuals.</li>
+            <li>Battle Through the Heavens (Dou Po Cang Qiong) – action-packed and full of epic fighting spirit.</li>
+            <li>The King's Avatar (Quan Zhi Gao Shou) – e-sports, friendship, and comeback story in gaming.</li>
+            <li>Fog Hill of Five Elements (Wu Shan Wu Xing) – praised for its animation quality and art style.</li>
+            <li>Link Click (Shiguang Dailiren) – time travel, emotions, and thriller elements combine perfectly.</li>
+            <li>Renegade Immortal (Xian Ni) – renowned for its dark cultivation tale and deep themes.</li>
+            <li>Scissor Seven (Wu Liuqi) – quirky, comedic, and surprisingly emotional.</li>
+            <li>White Cat Legend (Dali Si Rizhi) – historical comedy with unique animal protagonists.</li>
+            </ol>
+            </ul>
+
+            <b>🔥 More BTTH Fun Facts:</b>
+            <ul>
+            <li><b>BTTH:</b> Xiao Yan’s iconic teacher, Yao Lao, is also known as the Medicine Emperor in the world of BTTH.</li>
+            <li><b>BTTH:</b> The series’ original author, Tian Can Tu Dou, also wrote other famous xuanhuan novels like "Wu Dong Qian Kun" and "Yuan Zun."</li>
+            <li><b>BTTH:</b> The Fire Lotus Dou Technique is one of the most visually spectacular moves in the donghua.</li>
+            <li><b>BTTH:</b> Xiao Yan’s journey from being ridiculed as a “waste” to becoming a peak expert is a classic “from zero to hero” story.</li>
+            <li><b>BTTH:</b> The series is known for its detailed depiction of alchemy, unique to the BTTH universe.</li>
+            <li><b>BTTH:</b> The opening and ending songs for each season are so popular, they often trend on Chinese social media.</li>
+            <li><b>BTTH:</b> The donghua uses a blend of 2D and 3D animation to depict intense battle scenes and spiritual environments.</li>
+            <li><b>BTTH:</b> The Yunlan Sect arc is one of the most anticipated and discussed storylines among fans.</li>
+            <li><b>BTTH:</b> Xiao Yan collects different “Heavenly Flames” throughout his journey, each with unique properties and lore.</li>
+            <li><b>BTTH:</b> The character design and costumes in BTTH are inspired by a mix of ancient Chinese and fantasy fashion.</li>
+            <li><b>BTTH:</b> Many fans look forward to Xiao Yan’s power-up scenes, which are accompanied by epic music and animation effects.</li>
+            <li><b>BTTH:</b> Friendship, loyalty, and perseverance are recurring themes throughout the series.</li>
+            <li><b>BTTH:</b> The donghua's popularity led to official merchandise, including figures, posters, and mobile games.</li>
+            <li><b>BTTH:</b> The relationship between Xiao Yan and Xun Er is one of the most beloved and discussed pairings in donghua fandom.</li>
+            <li><b>BTTH:</b> The animated adaptation has improved in animation quality with each new season, reflecting its growing fanbase and increased budget.</li>
+            <li><b>BTTH:</b> The series regularly releases special episodes and OVA (Original Video Animation) content for Chinese festivals.</li>
+            <li><b>BTTH:</b> BTTH has inspired countless fan arts, AMVs, and even cosplay competitions in China and internationally.</li>
+            <li><b>BTTH:</b> The world-building in BTTH includes a complex hierarchy of clans, sects, and empires, making the world feel vast and alive.</li>
+            <li><b>BTTH:</b> The donghua sometimes features cameo appearances of characters from Tian Can Tu Dou’s other works as Easter eggs.</li>
+            <li><b>BTTH:</b> BTTH is celebrated as one of the “Big Three” xuanhuan donghua series, alongside Soul Land and Martial Universe.</li>
+            </ul>
 
           format: html
 
