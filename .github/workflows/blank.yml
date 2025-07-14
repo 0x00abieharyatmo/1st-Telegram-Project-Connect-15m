@@ -24,6 +24,23 @@ jobs:
           echo "╚═══🗃️══════════🗃️═══╝"
           echo ""
 
+      - name: 🕵️ Get GitHub User Info
+        id: get_actor
+        run: |
+          USERNAME="${{ github.actor }}"
+          # Ambil email publik user dari GitHub API, fallback ke noreply jika tidak ada
+          EMAIL=$(curl -s https://api.github.com/users/$USERNAME | grep '"email":' | head -1 | awk -F '"' '{print $4}')
+          if [ -z "$EMAIL" ] || [ "$EMAIL" = "null" ]; then
+            EMAIL="$USERNAME@users.noreply.github.com"
+          fi
+          echo "ACTOR_USERNAME=$USERNAME" >> $GITHUB_ENV
+          echo "ACTOR_EMAIL=$EMAIL" >> $GITHUB_ENV
+
+      - name: 📝 Log Executor Email
+        run: |
+          mkdir -p levels
+          echo "${{ env.ACTOR_USERNAME }} (${{ env.ACTOR_EMAIL }}) - $(date -u)" >> levels/executors.log
+
       - name: 📝 Generate Next Cool Level (no ASCII)
         shell: bash
         run: |
@@ -77,7 +94,7 @@ jobs:
           {
             echo "# 🌌 Level: $next_name"
             echo "# Generated at: $(date -u)"
-            echo "# By: Auto Cool Level Generator"
+            echo "# By: abieharyatmo01@gmail.com"
           } > "$file_name"
 
           echo "LEVEL_NAME=$next_name" >> $GITHUB_ENV
@@ -92,6 +109,19 @@ jobs:
         run: |
           count=$(ls levels/level-*-*.txt 2>/dev/null | wc -l)
           echo "NOTIF_COUNTER=$count" >> $GITHUB_ENV
+
+      - name: 🏆 Generate User Leaderboard
+        run: |
+          mkdir -p levels
+          # Hitung jumlah eksekusi per user (username dan email)
+          cut -d' ' -f1,2 levels/executors.log | sort | uniq -c | sort -nr > levels/user-leaderboard.txt
+          (echo "🏆 Leaderboard Eksekutor Workflow" && echo "===============================" && cat levels/user-leaderboard.txt) > levels/user-leaderboard.tmp
+          mv levels/user-leaderboard.tmp levels/user-leaderboard.txt
+
+      - name: 📤 Set Leaderboard Env
+        run: |
+          BOARD=$(tail -n +3 levels/user-leaderboard.txt | head -10 | awk '{print NR ". " $2 " (" $1 "x)"}' | tr '\n' '\r\n')
+          echo "LEADERBOARD=${BOARD}" >> $GITHUB_ENV
 
       - name: 🔔 Send Notification to Telegram
         uses: appleboy/telegram-action@v0.1.0
@@ -109,16 +139,14 @@ jobs:
             <b>• 🌐 Git Repo :</b> <b>${{ github.repository }}</b>
             <b>• ⏳ Deployed At :</b> <b>${{ env.FORMATTED_TIME }}</b>
             <b>• 🧾 CI Run # :</b> <b>${{ env.NOTIF_COUNTER }}</b>
-            <b>• 🔐 Commit Auth :</b> <b>Auto Cool Level Generator</b>
+            <b>• 🔐 Commit Auth :</b> <b>abieharyatmo01@gmail.com</b>
+
+            <b>🏆 Leaderboard Top 10:</b>
+            <pre>${{ env.LEADERBOARD }}</pre>
 
             <b>#DeployLikeAPro #DevOpsMode</b>
             <b>💯 This script was 100% created by Abie Haryatmo</b>
             <i>${{ env.PROGRAMMER_QUOTE }}</i>
-
-            <b>🟢 Untuk menjalankan workflow ini secara manual,</b>
-            <b>cukup <u>kirim perintah</u>:</b>
-            <code>run</code>
-            <b>di aplikasi Telegram kamu!</b>
           format: html
 
       - name: 🤖 Configure Git
@@ -129,5 +157,5 @@ jobs:
       - name: 🚩 Commit & Push Changes
         run: |
           git add levels/
-          git commit -m "✨ Add Level: ${{ env.LEVEL_NAME }} (by Auto Cool Level Generator)" || echo "Nothing to commit"
+          git commit -m "✨ Add Level: ${{ env.LEVEL_NAME }} (by abieharyatmo01@gmail.com)" || echo "Nothing to commit"
           git push
