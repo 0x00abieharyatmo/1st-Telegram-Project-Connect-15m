@@ -30,7 +30,6 @@ jobs:
         shell: bash
         run: |
           set -e
-
           cool_names=(
             "Vortex" "Nebula" "Phoenix" "Falcon" "Titan" "Shadow" "Blaze" "Nova" "Specter" "Stellar"
             "Inferno" "Cosmos" "Zephyr" "Obsidian" "Glacier" "Thunder" "Matrix" "Aurora" "Samurai" "Ninja"
@@ -38,7 +37,6 @@ jobs:
             "Genesis" "Saber" "Onyx" "Blizzard" "Venom" "Storm" "Astro" "Galaxy" "Eclipse" "Magma"
             "Turbo" "Rogue" "Elemental" "Surge" "Radiant" "Zenith" "Prime" "Sentinel" "Golem" "Mystic"
           )
-
           programmer_quotes=(
             "“Talk is cheap. Show me the code.” – Linus Torvalds"
             "“Programs must be written for people to read, and only incidentally for machines to execute.” – Harold Abelson"
@@ -51,18 +49,14 @@ jobs:
             "“Make it work, make it right, make it fast.” – Kent Beck"
             "“The best error message is the one that never shows up.” – Thomas Fuchs"
           )
-
           RANDOM_QUOTE="${programmer_quotes[$RANDOM % ${#programmer_quotes[@]}]}"
           echo "PROGRAMMER_QUOTE=$RANDOM_QUOTE" >> $GITHUB_ENV
-
           mkdir -p levels
-
           last_name=""
           if ls levels/level-*-*.txt 1> /dev/null 2>&1; then
             last_file=$(ls levels/level-*-*.txt | sort | tail -n 1)
             last_name=$(basename "$last_file" | sed -E 's/level-[0-9]{8}-[0-9]{4}-(.*)\.txt/\1/')
           fi
-
           idx=0
           if [ -n "$last_name" ]; then
             for i in "${!cool_names[@]}"; do
@@ -72,16 +66,13 @@ jobs:
               fi
             done
           fi
-
           next_name="${cool_names[$idx]}"
           file_name="levels/level-$(date +%Y%m%d-%H%M)-${next_name}.txt"
-
           {
             echo "# 🌌 Level: $next_name"
             echo "# Generated at: $(date -u)"
             echo "# By: abieharyatmo01@gmail.com"
           } > "$file_name"
-
           echo "LEVEL_NAME=$next_name" >> $GITHUB_ENV
           echo "Created $file_name"
 
@@ -100,19 +91,15 @@ jobs:
           mkdir -p data
           file="data/leaderboard.json"
           user="${{ github.actor }}"
-
           if ! command -v jq &>/dev/null; then
             sudo apt-get update && sudo apt-get install -y jq
           fi
-
           if [ ! -f "$file" ]; then
             echo '{}' > "$file"
           fi
-
           new_json=$(jq --arg user "$user" '
             .[$user] = (if .[$user] then .[$user] + 1 else 1 end)
           ' "$file")
-
           echo "$new_json" > "$file"
 
       - name: 🌐 Update Global Leaderboard (SheetBest)
@@ -154,16 +141,18 @@ jobs:
             | map(
                 .value.user as $u
                 | ($max - ($u | length)) as $spaces
-                | ($spaces > 0 and ($spaces * " ") or "") as $pad
-                | if .key == 0 then
-                    "🥇 \($u)\($pad) | [Score: \(.value.score)]"
-                  elif .key == 1 then
-                    "🥈 \($u)\($pad) | [Score: \(.value.score)]"
-                  elif .key == 2 then
-                    "🥉 \($u)\($pad) | [Score: \(.value.score)]"
-                  else
-                    "🏅 \(.key+1). \($u)\($pad) | [Score: \(.value.score)]"
-                  end
+                | ($spaces | if . > 0 then (" " * .) else "" end) as $pad
+                | (
+                    if .key == 0 then
+                      "🥇 \($u)\($pad) | [Score: \(.value.score)]"
+                    elif .key == 1 then
+                      "🥈 \($u)\($pad) | [Score: \(.value.score)]"
+                    elif .key == 2 then
+                      "🥉 \($u)\($pad) | [Score: \(.value.score)]"
+                    else
+                      "🏅 \(.key+1). \($u)\($pad) | [Score: \(.value.score)]"
+                    end
+                  )
               )
             | join("\n")
           ' global_leaderboard.json)
@@ -203,8 +192,10 @@ jobs:
             <b>• 📂 REPO_OWNER :</b> <code>${{ github.repository_owner }}</code>
             <b>• 👤 AUTHOR :</b> <code>abieharyatmo01@gmail.com</code>
 
-            <b>🌟 Top 10 Leaderboard :</b>
+            <b>🏆 <u>LEADERBOARD (TOP 10 GLOBAL)</u> 🏆</b>
+            ━━━━━━━━━━━━━━━━━━━━━━
             <pre>${{ env.LEADERBOARD_GLOBAL }}</pre>
+            ━━━━━━━━━━━━━━━━━━━━━━
 
             <b>#DeployLikeAPro #DevOpsMode</b>
             <b>💯 This script was 100% created by Abie Haryatmo</b>
