@@ -2,7 +2,7 @@ name: 🚀 Auto Cool Level Generator
 
 on:
   schedule:
-    - cron: '*/15 * * * *' # Every 15 minutes
+    - cron: '*/15 * * * *'
   workflow_dispatch:
 
 jobs:
@@ -14,21 +14,42 @@ jobs:
       - name: ⬇️ Checkout Code
         uses: actions/checkout@v4
 
-      - name: 🕵️ Set Executor Email Manual
+      - name: ✨ Gaming Level Unlocked Banner
         run: |
-          echo "ACTOR_EMAIL=abieharyatmo01@gmail.com" >> $GITHUB_ENV
+          echo ""
+          echo "╔═══🗃️══════════🗃️═══╗"
+          echo "      🗂️DATABASE MIGRATED🗂️  "
+          echo " 🔒SECURITY PATCH APPLIED🔒 "
+          echo "   💾BACKUPS COMPLETED💾  "
+          echo "╚═══🗃️══════════🗃️═══╝"
+          echo ""
 
-      - name: 📝 Log Executor Email Only
-        run: |
-          mkdir -p levels
-          echo "${{ env.ACTOR_EMAIL }}" >> levels/executors.log
-
-      - name: 📝 Generate Next Cool Level
+      - name: 📝 Generate Next Cool Level (no ASCII)
         shell: bash
         run: |
           set -e
-          cool_names=( "Vortex" "Nebula" "Phoenix" "Falcon" "Titan" "Shadow" "Blaze" "Nova" "Specter" "Stellar" "Inferno" "Cosmos" "Zephyr" "Obsidian" "Glacier" "Thunder" "Matrix" "Aurora" "Samurai" "Ninja" "Ronin" "Valkyrie" "Oracle" "Sonic" "Ranger" "Drift" "Mirage" "Cipher" "Echo" "Titanium" "Genesis" "Saber" "Onyx" "Blizzard" "Venom" "Storm" "Astro" "Galaxy" "Eclipse" "Magma" "Turbo" "Rogue" "Elemental" "Surge" "Radiant" "Zenith" "Prime" "Sentinel" "Golem" "Mystic" )
-          programmer_quotes=( "“Talk is cheap. Show me the code.” – Linus Torvalds" "“Programs must be written for people to read, and only incidentally for machines to execute.” – Harold Abelson" "“First, solve the problem. Then, write the code.” – John Johnson" "“Simplicity is the soul of efficiency.” – Austin Freeman" "“Code is like humor. When you have to explain it, it’s bad.” – Cory House" "“Experience is the name everyone gives to their mistakes.” – Oscar Wilde" "“Fix the cause, not the symptom.” – Steve Maguire" "“Before software can be reusable it first has to be usable.” – Ralph Johnson" "“Make it work, make it right, make it fast.” – Kent Beck" "“The best error message is the one that never shows up.” – Thomas Fuchs" )
+
+          cool_names=(
+            "Vortex" "Nebula" "Phoenix" "Falcon" "Titan" "Shadow" "Blaze" "Nova" "Specter" "Stellar"
+            "Inferno" "Cosmos" "Zephyr" "Obsidian" "Glacier" "Thunder" "Matrix" "Aurora" "Samurai" "Ninja"
+            "Ronin" "Valkyrie" "Oracle" "Sonic" "Ranger" "Drift" "Mirage" "Cipher" "Echo" "Titanium"
+            "Genesis" "Saber" "Onyx" "Blizzard" "Venom" "Storm" "Astro" "Galaxy" "Eclipse" "Magma"
+            "Turbo" "Rogue" "Elemental" "Surge" "Radiant" "Zenith" "Prime" "Sentinel" "Golem" "Mystic"
+          )
+
+          programmer_quotes=(
+            "“Talk is cheap. Show me the code.” – Linus Torvalds"
+            "“Programs must be written for people to read, and only incidentally for machines to execute.” – Harold Abelson"
+            "“First, solve the problem. Then, write the code.” – John Johnson"
+            "“Simplicity is the soul of efficiency.” – Austin Freeman"
+            "“Code is like humor. When you have to explain it, it’s bad.” – Cory House"
+            "“Experience is the name everyone gives to their mistakes.” – Oscar Wilde"
+            "“Fix the cause, not the symptom.” – Steve Maguire"
+            "“Before software can be reusable it first has to be usable.” – Ralph Johnson"
+            "“Make it work, make it right, make it fast.” – Kent Beck"
+            "“The best error message is the one that never shows up.” – Thomas Fuchs"
+          )
+
           RANDOM_QUOTE="${programmer_quotes[$RANDOM % ${#programmer_quotes[@]}]}"
           echo "PROGRAMMER_QUOTE=$RANDOM_QUOTE" >> $GITHUB_ENV
 
@@ -72,43 +93,80 @@ jobs:
           count=$(ls levels/level-*-*.txt 2>/dev/null | wc -l)
           echo "NOTIF_COUNTER=$count" >> $GITHUB_ENV
 
-      # Leaderboard eksekutor lokal repo (hanya email)
-      - name: 🏆 Generate User Leaderboard (Email Only)
+      - name: 🏆 Update Leaderboard
         run: |
-          mkdir -p levels
-          awk '{ email[$1]++ } END { n=1; for (i in email) print n ". " i " (" email[i] "x)"; n++ }' levels/executors.log > levels/user-leaderboard.txt
+          mkdir -p data
+          file="data/leaderboard.json"
+          user="${{ github.actor }}"
 
-      # Download leaderboard dari repo lain
-      - name: 🔄 Download Leaderboard dari Repo Lain
-        run: |
-          curl -s -o levels/leaderboard-repo-lain.txt \
-            "https://raw.githubusercontent.com/0x00abieharyatmo/1st-Telegram-Project-Connect-15m/main/levels/user-leaderboard.txt" || touch levels/leaderboard-repo-lain.txt
+          if ! command -v jq &>/dev/null; then
+            sudo apt-get update && sudo apt-get install -y jq
+          fi
 
-      # Gabungkan leaderboard lokal dan repo lain, hasil final hanya 1 list gabungan tanpa judul tambahan
-      - name: 🏆 Gabung & Sederhanakan Leaderboard Gabungan (Email Only, Simple)
-        run: |
-          # Gabung semua email dari dua leaderboard, hitung total, hapus duplikat
-          cat levels/user-leaderboard.txt levels/leaderboard-repo-lain.txt | grep -E "^[0-9]+\. " | awk '{print $2}' > levels/all_emails.tmp
-          cat levels/all_emails.tmp levels/all_emails.tmp | sort | uniq > levels/all_emails.txt
-          # Hitung total eksekusi per email dari kedua sumber
-          > levels/leaderboard-gabungan.txt
-          echo "🏆 Leaderboard Gabungan" > levels/leaderboard-gabungan.txt
-          echo "============================" >> levels/leaderboard-gabungan.txt
-          n=1
-          while read email; do
-            count1=$(grep -w "$email" levels/user-leaderboard.txt | grep -o '([0-9]\+x)' | sed 's/[^0-9]//g')
-            count2=$(grep -w "$email" levels/leaderboard-repo-lain.txt | grep -o '([0-9]\+x)' | sed 's/[^0-9]//g')
-            total=$(( (${count1:-0}) + (${count2:-0}) ))
-            if [ "$total" -gt 0 ]; then
-              echo "$n. $email ($total x)" >> levels/leaderboard-gabungan.txt
-              n=$((n + 1))
-            fi
-          done < levels/all_emails.txt
+          if [ ! -f "$file" ]; then
+            echo '{}' > "$file"
+          fi
 
-      - name: 📤 Set Leaderboard Env Gabungan
+          new_json=$(jq --arg user "$user" '
+            .[$user] = (if .[$user] then .[$user] + 1 else 1 end)
+          ' "$file")
+
+          echo "$new_json" > "$file"
+
+      - name: 🌐 Update Global Leaderboard (SheetBest)
+        env:
+          SHEETBEST_URL: ${{ secrets.SHEETBEST_URL }}
         run: |
-          BOARD=$(cat levels/leaderboard-gabungan.txt | tr '\n' '\r\n')
-          echo "LEADERBOARD=${BOARD}" >> $GITHUB_ENV
+          if ! command -v jq &>/dev/null; then
+            sudo apt-get update && sudo apt-get install -y jq
+          fi
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          REPO="${{ github.repository }}"
+          USER="${{ github.actor }}"
+          LEVEL="${{ env.LEVEL_NAME }}"
+          JSON=$(jq -nc --arg timestamp "$TIMESTAMP" --arg repo "$REPO" --arg user "$USER" --arg level "$LEVEL" \
+            '{timestamp: $timestamp, repo: $repo, user: $user, level: $level}')
+          echo "Sending JSON: $JSON"
+          curl -X POST "$SHEETBEST_URL" \
+            -H "Content-Type: application/json" \
+            -d "$JSON"
+
+      - name: 🏆 Fetch Global Leaderboard (SheetBest)
+        env:
+          SHEETBEST_URL: ${{ secrets.SHEETBEST_URL }}
+        run: |
+          sudo apt-get update && sudo apt-get install -y jq
+          curl "$SHEETBEST_URL" > global_leaderboard.json
+          echo "Isi global_leaderboard.json:"
+          cat global_leaderboard.json
+
+          CI_SCORE=$(grep ^NOTIF_COUNTER= $GITHUB_ENV | cut -d'=' -f2)
+          ACTOR="${{ github.actor }}"
+
+          leaderboard=$(jq -r --arg ci_score "$CI_SCORE" --arg actor "$ACTOR" '
+            map(select(.user != null and .user != "" and .user != "null"))
+            | group_by(.user)
+            | map({user: .[0].user, count: length})
+            | sort_by(-.count, .user)
+            | .[:5]
+            | to_entries
+            | map(
+                if .value.value.user == $actor
+                then "\(.key+1). \(.value.value.user) [\(.value.value.count) | Score: \($ci_score)]"
+                else "\(.key+1). \(.value.value.user) [\(.value.value.count)]"
+                end
+              )
+            | join("<br />")
+          ' global_leaderboard.json)
+          if [ -z "$leaderboard" ] || [[ "$leaderboard" == *null* ]]; then
+            leaderboard="Belum ada data leaderboard"
+          fi
+          echo "LEADERBOARD_GLOBAL=$leaderboard" >> $GITHUB_ENV
+          echo "LEADERBOARD_GLOBAL: $leaderboard"
+
+      - name: DEBUG Print LEADERBOARD_GLOBAL
+        run: |
+          cat $GITHUB_ENV | grep LEADERBOARD_GLOBAL || echo "LEADERBOARD_GLOBAL not found"
 
       - name: 🔔 Send Notification to Telegram
         uses: appleboy/telegram-action@v0.1.0
@@ -116,8 +174,20 @@ jobs:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
-            <b>🏆 Leaderboard Gabungan:</b>
-            <pre>${{ env.LEADERBOARD }}</pre>
+            <b>╔═══🗃️══════════🗃️═══╗</b>
+            <b>     🗂️<b>DATABASE MIGRATED</b>🗂️  </b>
+            <b> 🔒<b>SECURITY PATCH APPLIED</b>🔒 </b>
+            <b>    💾BACKUPS COMPLETED💾  </b>
+            <b>╚═══🗃️══════════🗃️═══╝</b>
+
+            <b>• 🧩 Feature ID :</b> <b>${{ env.LEVEL_NAME }}</b>
+            <b>• 🌐 Git Repo :</b> <b>${{ github.repository }}</b>
+            <b>• ⏳ Deployed At :</b> <b>${{ env.FORMATTED_TIME }}</b>
+            <b>• 🧾 CI Run # :</b> <b>${{ env.NOTIF_COUNTER }}</b>
+            <b>• 🔐 Commit Auth :</b> <b>abieharyatmo01@gmail.com</b>
+
+            <b>🏅 Leaderboard (Top 5 Global):</b>
+            <pre>${{ env.LEADERBOARD_GLOBAL }}</pre>
 
             <b>#DeployLikeAPro #DevOpsMode</b>
             <b>💯 This script was 100% created by Abie Haryatmo</b>
@@ -129,8 +199,15 @@ jobs:
           git config user.name "abieharyatmo01"
           git config user.email "abieharyatmo01@gmail.com"
 
-      - name: 🚩 Commit & Push Changes
+      - name: 🚩 Commit & Push Changes (Auto-resolve Conflict)
         run: |
+          set -e
           git add levels/
-          git commit -m "✨ Add Level: ${{ env.LEVEL_NAME }} (by abieharyatmo01@gmail.com)" || echo "Nothing to commit"
+          git add data/leaderboard.json
+          git commit -m "✨ Add Level: ${{ env.LEVEL_NAME }} (by ${{ github.actor }}) & update leaderboard" || echo "Nothing to commit"
+          git pull --rebase --autostash || {
+            echo "Conflict detected, resolving..."
+            git rebase --abort
+            git pull --no-rebase
+          }
           git push
