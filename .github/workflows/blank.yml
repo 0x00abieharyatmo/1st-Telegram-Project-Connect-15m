@@ -1,4 +1,4 @@
-name: 🚀 Auto Cool Level Generator
+name: 🚀 Auto Cool Level Generator (Leaderboard Cross-Repo)
 
 on:
   schedule:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   generate-level:
-    name: 🌟 Generate Cool Level
+    name: 🌟 Generate Cool Level & Leaderboard Gabungan
     runs-on: ubuntu-latest
 
     steps:
@@ -28,7 +28,6 @@ jobs:
         id: get_actor
         run: |
           USERNAME="${{ github.actor }}"
-          # Ambil email publik user dari GitHub API, fallback ke noreply jika tidak ada
           EMAIL=$(curl -s https://api.github.com/users/$USERNAME | grep '"email":' | head -1 | awk -F '"' '{print $4}')
           if [ -z "$EMAIL" ] || [ "$EMAIL" = "null" ]; then
             EMAIL="$USERNAME@users.noreply.github.com"
@@ -39,7 +38,6 @@ jobs:
       - name: 📝 Log Executor Username & Email
         run: |
           mkdir -p levels
-          # Simpan username dan email yang menjalankan workflow
           echo "${{ env.ACTOR_USERNAME }} ${{ env.ACTOR_EMAIL }} - $(date -u)" >> levels/executors.log
 
       - name: 📝 Generate Next Cool Level (no ASCII)
@@ -111,17 +109,48 @@ jobs:
           count=$(ls levels/level-*-*.txt 2>/dev/null | wc -l)
           echo "NOTIF_COUNTER=$count" >> $GITHUB_ENV
 
-      - name: 🏆 Generate User Leaderboard (by username & email)
+      # Leaderboard lokal repo ini
+      - name: 🏆 Generate User Leaderboard (gabung kombinasi username)
         run: |
           mkdir -p levels
-          # Hitung jumlah eksekusi per user (username dan email)
-          awk '{ user[$1" "$2]++ } END { for (i in user) print user[i], i }' levels/executors.log | sort -nr > levels/user-leaderboard.txt
-          (echo "🏆 Leaderboard Eksekutor Workflow" && echo "===============================" && awk '{print NR ". " $2 " " $3 " (" $1 "x)"}' levels/user-leaderboard.txt) > levels/user-leaderboard.tmp
-          mv levels/user-leaderboard.tmp levels/user-leaderboard.txt
+          awk '{ user[$1" "$2]++ } END { for (i in user) print user[i], i }' levels/executors.log | sort -k2,2 -k3,3 > levels/user-leaderboard-raw.txt
+          awk '
+          {
+            arr[$2] = arr[$2] (arr[$2] ? ". " : "") $2 " (" $3 ") (" $1 "x)"
+          }
+          END {
+            n=1
+            for (i in arr) {
+              print n ". " arr[i]
+              n++
+            }
+          }
+          ' levels/user-leaderboard-raw.txt > levels/user-leaderboard.txt
+          sed -i '1s/^/🏆 Leaderboard Eksekutor Workflow\n===============================\n/' levels/user-leaderboard.txt
 
-      - name: 📤 Set Leaderboard Env
+      # Download leaderboard dari repo lain
+      - name: 🔄 Download Leaderboard dari Repo Lain
         run: |
-          BOARD=$(tail -n +3 levels/user-leaderboard.txt | head -10 | tr '\n' '\r\n')
+          # Ganti dengan repo dan branch lain yang kamu ingin tampilkan leaderboard-nya
+          curl -s -o levels/leaderboard-repo-lain.txt \
+            "https://raw.githubusercontent.com/0x00abieharyatmo/1st-Telegram-Project-Connect-15m/main/levels/user-leaderboard.txt" || touch levels/leaderboard-repo-lain.txt
+
+      # Gabungkan leaderboard lokal dan dari repo lain
+      - name: 🏆 Gabung Leaderboard Cross-Repo
+        run: |
+          echo "🏆 Leaderboard Gabungan" > levels/leaderboard-gabungan.txt
+          echo "============================" >> levels/leaderboard-gabungan.txt
+          echo "" >> levels/leaderboard-gabungan.txt
+          echo "Leaderboard Repo Ini:" >> levels/leaderboard-gabungan.txt
+          tail -n +3 levels/user-leaderboard.txt >> levels/leaderboard-gabungan.txt
+          echo "" >> levels/leaderboard-gabungan.txt
+          echo "Leaderboard Repo Lain:" >> levels/leaderboard-gabungan.txt
+          tail -n +3 levels/leaderboard-repo-lain.txt >> levels/leaderboard-gabungan.txt
+
+      # Set leaderboard gabungan ke env untuk Telegram
+      - name: 📤 Set Leaderboard Env Gabungan
+        run: |
+          BOARD=$(tail -n +3 levels/leaderboard-gabungan.txt | head -20 | tr '\n' '\r\n')
           echo "LEADERBOARD=${BOARD}" >> $GITHUB_ENV
 
       - name: 🔔 Send Notification to Telegram
@@ -142,7 +171,7 @@ jobs:
             <b>• 🧾 CI Run # :</b> <b>${{ env.NOTIF_COUNTER }}</b>
             <b>• 🔐 Commit Auth :</b> <b>abieharyatmo01@gmail.com</b>
 
-            <b>🏆 Leaderboard Top 10:</b>
+            <b>🏆 Leaderboard Gabungan:</b>
             <pre>${{ env.LEADERBOARD }}</pre>
 
             <b>#DeployLikeAPro #DevOpsMode</b>
