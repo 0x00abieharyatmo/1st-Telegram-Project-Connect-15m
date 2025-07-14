@@ -1,4 +1,4 @@
-name: 🚀 Auto Cool Level Generator (Leaderboard Cross-Repo)
+name: 🚀 Auto Cool Level Generator (Leaderboard Cross-Repo, Rapi)
 
 on:
   schedule:
@@ -135,8 +135,8 @@ jobs:
           curl -s -o levels/leaderboard-repo-lain.txt \
             "https://raw.githubusercontent.com/0x00abieharyatmo/1st-Telegram-Project-Connect-15m/main/levels/user-leaderboard.txt" || touch levels/leaderboard-repo-lain.txt
 
-      # Gabungkan leaderboard lokal dan dari repo lain
-      - name: 🏆 Gabung Leaderboard Cross-Repo
+      # Gabungkan leaderboard lokal dan dari repo lain, dipisah baris & judul
+      - name: 🏆 Gabung Leaderboard Cross-Repo (Rapi)
         run: |
           echo "🏆 Leaderboard Gabungan" > levels/leaderboard-gabungan.txt
           echo "============================" >> levels/leaderboard-gabungan.txt
@@ -150,7 +150,7 @@ jobs:
       # Set leaderboard gabungan ke env untuk Telegram
       - name: 📤 Set Leaderboard Env Gabungan
         run: |
-          BOARD=$(tail -n +3 levels/leaderboard-gabungan.txt | head -20 | tr '\n' '\r\n')
+          BOARD=$(cat levels/leaderboard-gabungan.txt | tr '\n' '\r\n')
           echo "LEADERBOARD=${BOARD}" >> $GITHUB_ENV
 
       - name: 🔔 Send Notification to Telegram
