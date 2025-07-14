@@ -36,10 +36,11 @@ jobs:
           echo "ACTOR_USERNAME=$USERNAME" >> $GITHUB_ENV
           echo "ACTOR_EMAIL=$EMAIL" >> $GITHUB_ENV
 
-      - name: 📝 Log Executor Email
+      - name: 📝 Log Executor Username & Email
         run: |
           mkdir -p levels
-          echo "${{ env.ACTOR_USERNAME }} (${{ env.ACTOR_EMAIL }}) - $(date -u)" >> levels/executors.log
+          # Simpan username dan email yang menjalankan workflow
+          echo "${{ env.ACTOR_USERNAME }} ${{ env.ACTOR_EMAIL }} - $(date -u)" >> levels/executors.log
 
       - name: 📝 Generate Next Cool Level (no ASCII)
         shell: bash
@@ -110,17 +111,17 @@ jobs:
           count=$(ls levels/level-*-*.txt 2>/dev/null | wc -l)
           echo "NOTIF_COUNTER=$count" >> $GITHUB_ENV
 
-      - name: 🏆 Generate User Leaderboard
+      - name: 🏆 Generate User Leaderboard (by username & email)
         run: |
           mkdir -p levels
           # Hitung jumlah eksekusi per user (username dan email)
-          cut -d' ' -f1,2 levels/executors.log | sort | uniq -c | sort -nr > levels/user-leaderboard.txt
-          (echo "🏆 Leaderboard Eksekutor Workflow" && echo "===============================" && cat levels/user-leaderboard.txt) > levels/user-leaderboard.tmp
+          awk '{ user[$1" "$2]++ } END { for (i in user) print user[i], i }' levels/executors.log | sort -nr > levels/user-leaderboard.txt
+          (echo "🏆 Leaderboard Eksekutor Workflow" && echo "===============================" && awk '{print NR ". " $2 " " $3 " (" $1 "x)"}' levels/user-leaderboard.txt) > levels/user-leaderboard.tmp
           mv levels/user-leaderboard.tmp levels/user-leaderboard.txt
 
       - name: 📤 Set Leaderboard Env
         run: |
-          BOARD=$(tail -n +3 levels/user-leaderboard.txt | head -10 | awk '{print NR ". " $2 " (" $1 "x)"}' | tr '\n' '\r\n')
+          BOARD=$(tail -n +3 levels/user-leaderboard.txt | head -10 | tr '\n' '\r\n')
           echo "LEADERBOARD=${BOARD}" >> $GITHUB_ENV
 
       - name: 🔔 Send Notification to Telegram
