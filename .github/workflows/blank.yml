@@ -81,6 +81,7 @@ jobs:
           } > "$file_name"
 
           echo "LEVEL_NAME=$next_name" >> $GITHUB_ENV
+          echo "LEVEL_FILE_NAME=$file_name" >> $GITHUB_ENV
           echo "Created $file_name"
 
       - name: ⏰ Generate Formatted Time
@@ -106,6 +107,7 @@ jobs:
             <b>╚═══🗃️══════════🗃️═══╝</b>
 
             <b>• 🧩 Feature ID :</b> <b>${{ env.LEVEL_NAME }}</b>
+            <b>• 📄 File Baru :</b> <b>${{ env.LEVEL_FILE_NAME }}</b>
             <b>• 🌐 Git Repo :</b> <b>${{ github.repository }}</b>
             <b>• ⏳ Deployed At :</b> <b>${{ env.FORMATTED_TIME }}</b>
             <b>• 🧾 CI Run # :</b> <b>${{ env.NOTIF_COUNTER }}</b>
@@ -123,11 +125,4 @@ jobs:
 
       - name: 🤖 Configure Git
         run: |
-          git config user.name "abieharyatmo01"
-          git config user.email "abieharyatmo01@gmail.com"
-
-      - name: 🚩 Commit & Push Changes
-        run: |
-          git add levels/
-          git commit -m "✨ Add Level: ${{ env.LEVEL_NAME }} (by Auto Cool Level Generator)" || echo "Nothing to commit"
-          git push
+          git config user.name
