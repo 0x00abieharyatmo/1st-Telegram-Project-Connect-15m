@@ -212,15 +212,15 @@ jobs:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
             <b>╔═══🌌══════════🌌═══╗</b>
-            <b>     🐉<b>SPIRIT VEINS AWAKENED</b>🐉  </b>
+            <b>   🐉<b>SPIRIT VEINS AWAKENED</b>🐉  </b>
             <b> 🏮<b>IMMORTAL SEAL UNLOCKED</b>🏮 </b>
-            <b>    🍃QI FLOW HARMONIZED🍃  </b>
+            <b>     🍃QI FLOW HARMONIZED🍃  </b>
             <b>╚═══🌌══════════🌌═══╝</b>
 
             <b>• 🔁 TRIAL_RUN :</b> <code>${{ env.NOTIF_COUNTER }}</code>
             <b>• 🏅 CULTIVATOR_SCORE :</b> <code>${{ env.SCORE_SELF }}</code>
             <b>• 🏯 SECT_OWNER :</b> <code>${{ github.repository_owner }}</code>
-            <b>• ⏱️ TIME_OF_ASCENSION :</b> <code>${{ env.FORMATTED_TIME }}</code>
+            <b>• 🚶 JOURNEY_AT :</b> <code>${{ env.FORMATTED_TIME }}</code>
 
             <b>• 🧩 CULTIVATION_STAGE :</b> <code>${{ env.LEVEL_NAME }}</code>
             <b>• 👤 IMMORTAL_NAME :</b> <code>abieharyatmo01@gmail.com</code>
