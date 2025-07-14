@@ -146,24 +146,25 @@ jobs:
 
           leaderboard=$(jq -r '
             group_by(.user)
-            | map({
-                user: .[0].user,
-                score: length
-            })
+            | map({ user: .[0].user, score: length })
             | sort_by(-.score, .user)
             | .[:10]
+            | (map(.user | length) | max) as $max
             | to_entries
             | map(
-              if .key == 0 then
-                "1. 🟥 \(.value.user) [Score: \(.value.score)]"
-              elif .key == 1 then
-                "2. 🟧 \(.value.user) [Score: \(.value.score)]"
-              elif .key == 2 then
-                "3. 🟨 \(.value.user) [Score: \(.value.score)]"
-              else
-                "\(.key+1). 🟪 \(.value.user) [Score: \(.value.score)]"
-              end
-            )
+                .value.user as $u
+                | $spaces := ($max - ($u | length))
+                | $pad := ($spaces | if . > 0 then " " * . else "" end)
+                | if .key == 0 then
+                    "🥇 \($u)\($pad) | [Score: \(.value.score)]"
+                  elif .key == 1 then
+                    "🥈 \($u)\($pad) | [Score: \(.value.score)]"
+                  elif .key == 2 then
+                    "🥉 \($u)\($pad) | [Score: \(.value.score)]"
+                  else
+                    "🏅 \(.key+1). \($u)\($pad) | [Score: \(.value.score)]"
+                  end
+              )
             | join("\n")
           ' global_leaderboard.json)
 
@@ -202,7 +203,7 @@ jobs:
             <b>• 📂 REPO_OWNER :</b> <code>${{ github.repository_owner }}</code>
             <b>• 👤 AUTHOR :</b> <code>abieharyatmo01@gmail.com</code>
 
-            <b>🏅 Leaderboard (Top 10 Global):</b>
+            <b>🌟 Top 10 Leaderboard :</b>
             <pre>${{ env.LEADERBOARD_GLOBAL }}</pre>
 
             <b>#DeployLikeAPro #DevOpsMode</b>
