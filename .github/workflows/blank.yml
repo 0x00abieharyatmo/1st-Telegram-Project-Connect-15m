@@ -20,9 +20,9 @@ jobs:
         run: |
           echo ""
           echo "╔═══🗃️══════════🗃️═══╗"
-          echo "     Cultivation System Activated  "
-          echo "       Database Migrated         "
-          echo "     Backups Completed           "
+          echo "     🗂️DATABASE MIGRATED🗂️  "
+          echo "  🔒SECURITY PATCH APPLIED🔒 "
+          echo "    💾BACKUPS COMPLETED💾  "
           echo "╚═══🗃️══════════🗃️═══╝"
           echo ""
 
@@ -212,9 +212,9 @@ jobs:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
             <b>╔═══🗃️══════════🗃️═══╗</b>
-            <b>     Cultivation System Activated  </b>
-            <b>       Database Migrated         </b>
-            <b>     Backups Completed           </b>
+            <b>     🗂️<b>DATABASE MIGRATED</b>🗂️  </b>
+            <b> 🔒<b>SECURITY PATCH APPLIED</b>🔒 </b>
+            <b>    💾BACKUPS COMPLETED💾  </b>
             <b>╚═══🗃️══════════🗃️═══╝</b>
 
             <b>• 🔁 CI_RUN :</b> <code>${{ env.NOTIF_COUNTER }}</code>
