@@ -87,7 +87,7 @@ jobs:
 
       - name: ⏰ Generate Formatted Time
         run: |
-          echo "FORMATTED_TIME=$(TZ='Asia/Jakarta' date '+%d/%m/%y %H:%M')" >> $GITHUB_ENV
+          echo "FORMATTED_TIME=$(TZ='Asia/Jakarta' date '+%d/%m/%y %H:%M:%S')" >> $GITHUB_ENV
 
       - name: 🔢 Generate Notification Counter
         id: notif-counter
