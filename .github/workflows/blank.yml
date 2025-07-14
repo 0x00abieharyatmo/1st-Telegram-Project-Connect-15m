@@ -79,7 +79,7 @@ jobs:
           {
             echo "# 🌌 Level: $next_name"
             echo "# Generated at: $(date -u)"
-            echo "# By: ethellyneera@gmail.com"
+            echo "# By: abieharyatmo01@gmail.com"
           } > "$file_name"
 
           echo "LEVEL_NAME=$next_name" >> $GITHUB_ENV
@@ -141,7 +141,6 @@ jobs:
           curl "$SHEETBEST_URL" > global_leaderboard.json
 
           NOTIF_COUNTER="${{ env.NOTIF_COUNTER }}"
-          # Hitung score user sekarang
           SCORE_SELF=$(jq -r --arg user "${{ github.actor }}" '[.[] | select(.user==$user)] | length' global_leaderboard.json)
           echo "SCORE_SELF=$SCORE_SELF" >> $GITHUB_ENV
 
@@ -197,7 +196,7 @@ jobs:
             <b>• ⏳ Deployed At :</b> <b>${{ env.FORMATTED_TIME }}</b>
             <b>• 🧾 CI Run # :</b> <b>${{ env.NOTIF_COUNTER }}</b>
             <b>• 🏅 Score :</b> <b>${{ env.SCORE_SELF }}</b>
-            <b>• 🔐 Commit Auth :</b> <b>ethellyneera@gmail.com</b>
+            <b>• 🔐 Commit Auth :</b> <b>abieharyatmo01@gmail.com</b>
 
             <b>🏅 Leaderboard (Top 10 Global):</b>
             <pre>${{ env.LEADERBOARD_GLOBAL }}</pre>
@@ -209,8 +208,8 @@ jobs:
 
       - name: 🤖 Configure Git
         run: |
-          git config user.name "ethellyneera"
-          git config user.email "ethellyneera@gmail.com"
+          git config user.name "abieharyatmo01"
+          git config user.email "abieharyatmo01@gmail.com"
 
       - name: 🚩 Commit & Push Changes (Auto-resolve Conflict)
         run: |
