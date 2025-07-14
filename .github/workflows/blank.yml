@@ -180,6 +180,14 @@ jobs:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
+            <pre>
+╔═══🗃️══════════🗃️═══╗
+     🗂️DATABASE MIGRATED🗂️  
+ 🔒SECURITY PATCH APPLIED🔒 
+    💾BACKUPS COMPLETED💾  
+╚═══🗃️══════════🗃️═══╝
+            </pre>
+
             <b>• 🧩 Feature ID :</b> <b>${{ env.LEVEL_NAME }}</b>
             <b>• 🌐 Git Repo :</b> <b>${{ github.repository }}</b>
             <b>• ⏳ Deployed At :</b> <b>${{ env.FORMATTED_TIME }}</b>
