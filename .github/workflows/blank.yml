@@ -87,7 +87,7 @@ jobs:
 
       - name: ⏰ Generate Formatted Time
         run: |
-          echo "FORMATTED_TIME=$(TZ='Asia/Jakarta' date '+%d/%m/%Y %H:%M:%S WIB')" >> $GITHUB_ENV
+          echo "FORMATTED_TIME=$(TZ='Asia/Jakarta' date '+%d/%m/%y %H:%M')" >> $GITHUB_ENV
 
       - name: 🔢 Generate Notification Counter
         id: notif-counter
@@ -146,19 +146,22 @@ jobs:
 
           leaderboard=$(jq -r '
             group_by(.user)
-            | map({user: .[0].user, last_level: .[-1].level, score: length})
+            | map({
+                user: .[0].user,
+                score: length
+            })
             | sort_by(-.score, .user)
             | .[:10]
             | to_entries
             | map(
               if .key == 0 then
-                "1. 🟥 \(.value.user) [\(.value.last_level) | Score: \(.value.score)]"
+                "1. 🟥 \(.value.user) [Score: \(.value.score)]"
               elif .key == 1 then
-                "2. 🟧 \(.value.user) [\(.value.last_level) | Score: \(.value.score)]"
+                "2. 🟧 \(.value.user) [Score: \(.value.score)]"
               elif .key == 2 then
-                "3. 🟨 \(.value.user) [\(.value.last_level) | Score: \(.value.score)]"
+                "3. 🟨 \(.value.user) [Score: \(.value.score)]"
               else
-                "\(.key+1). 🟪 \(.value.user) [\(.value.last_level) | Score: \(.value.score)]"
+                "\(.key+1). 🟪 \(.value.user) [Score: \(.value.score)]"
               end
             )
             | join("\n")
@@ -191,12 +194,12 @@ jobs:
             <b>    💾BACKUPS COMPLETED💾  </b>
             <b>╚═══🗃️══════════🗃️═══╝</b>
 
-            <b>• 🧩 Feature ID :</b> <b>${{ env.LEVEL_NAME }}</b>
-            <b>• 🌐 Git Repo :</b> <b>${{ github.repository }}</b>
-            <b>• ⏳ Deployed At :</b> <b>${{ env.FORMATTED_TIME }}</b>
-            <b>• 🧾 CI Run # :</b> <b>${{ env.NOTIF_COUNTER }}</b>
-            <b>• 🏅 Score :</b> <b>${{ env.SCORE_SELF }}</b>
-            <b>• 🔐 Commit Auth :</b> <b>abieharyatmo01@gmail.com</b>
+            <b>• 🧩 LEVEL_ID :</b> <code>${{ env.LEVEL_NAME }}</code>
+            <b>• 📂 REPO_OWNER :</b> <code>${{ github.repository_owner }}</code>
+            <b>• ⏱️ BUILD_AT :</b> <code>${{ env.FORMATTED_TIME }}</code>
+            <b>• 🔁 CI_RUN :</b> <code>${{ env.NOTIF_COUNTER }}</code>
+            <b>• 🏅 DEV_SCORE :</b> <code>${{ env.SCORE_SELF }}</code>
+            <b>• 👤 AUTHOR :</b> <code>abieharyatmo01@gmail.com</code>
 
             <b>🏅 Leaderboard (Top 10 Global):</b>
             <pre>${{ env.LEADERBOARD_GLOBAL }}</pre>
