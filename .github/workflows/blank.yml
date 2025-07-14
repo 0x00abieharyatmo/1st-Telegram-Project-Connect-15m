@@ -218,11 +218,11 @@ jobs:
             <b>╚═══🗃️══════════🗃️═══╝</b>
 
             <b>• 🔁 CI_RUN :</b> <code>${{ env.NOTIF_COUNTER }}</code>
-            <b>• 🧩 LEVEL_ID :</b> <code>${{ env.LEVEL_NAME }}</code>
-            <b>• ⏱️ BUILD_AT :</b> <code>${{ env.FORMATTED_TIME }}</code>
             <b>• 🏅 DEV_SCORE :</b> <code>${{ env.SCORE_SELF }}</code>
-
             <b>• 📂 REPO_OWNER :</b> <code>${{ github.repository_owner }}</code>
+            <b>• ⏱️ BUILD_AT :</b> <code>${{ env.FORMATTED_TIME }}</code>
+
+            <b>• 🧩 LEVEL_ID :</b> <code>${{ env.LEVEL_NAME }}</code>
             <b>• 👤 AUTHOR :</b> <code>abieharyatmo01@gmail.com</code>
 
             <b>🏆 <u>LEADERBOARD (TOP 10 GLOBAL)</u> 🏆</b>
@@ -232,6 +232,10 @@ jobs:
 
             <b>#Cultivation #DevOpsMode</b>
             <b>Script by Abie Haryatmo</b>
+
+            <b>🌟 Fun Fact:</b>
+            Did you know? Octopuses have three hearts and blue blood. Two of the hearts pump blood to the gills, while the third pumps it to the rest of the body. The blue color comes from a copper-based molecule called hemocyanin, which is more efficient than hemoglobin for transporting oxygen in cold and low-oxygen environments.
+
           format: html
 
       - name: 🤖 Configure Git
