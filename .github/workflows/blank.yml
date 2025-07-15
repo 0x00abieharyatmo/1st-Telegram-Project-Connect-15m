@@ -20,7 +20,7 @@ jobs:
         run: |
           echo ""
           echo "╔═══🌌══════════🌌═══╗"
-          echo "     🐉SPIRIT VEINS AWAKENED🐉  "
+          echo "    🐉SPIRIT VEINS AWAKENED🐉  "
           echo "  🏮IMMORTAL SEAL UNLOCKED🏮 "
           echo "    🍃QI FLOW HARMONIZED🍃  "
           echo "╚═══🌌══════════🌌═══╝"
@@ -171,28 +171,43 @@ jobs:
           SCORE_SELF=$(jq -r --arg user "${{ github.actor }}" '[.[] | select(.user==$user)] | length' global_leaderboard.json)
           echo "SCORE_SELF=$SCORE_SELF" >> $GITHUB_ENV
 
+          # Logic updated for better alignment
           leaderboard=$(jq -r '
             group_by(.user)
             | map({ user: .[0].user, score: length })
             | sort_by(-.score, .user)
             | .[:10]
-            | (map(.user | length) | max) as $max
+            | (
+                # First pass to determine max length of the combined rank-prefix and user
+                map(
+                  .user as $u
+                  | .key as $k
+                  | (
+                      if $k == 0 then "🥇 "
+                      elif $k == 1 then "🥈 "
+                      elif $k == 2 then "🥉 "
+                      else "🏅 \($k+1). "
+                      end
+                    ) as $prefix
+                  | ($prefix + $u) | length
+                ) | max
+              ) as $max_combined_len
             | to_entries
             | map(
                 .value.user as $u
-                | ($max - ($u | length)) as $spaces
-                | ($spaces | if . > 0 then (" " * .) else "" end) as $pad
+                | .value.score as $score_val
+                | .key as $k
                 | (
-                    if .key == 0 then
-                      "🥇 \($u)\($pad) | [Score: \(.value.score)]"
-                    elif .key == 1 then
-                      "🥈 \($u)\($pad) | [Score: \(.value.score)]"
-                    elif .key == 2 then
-                      "🥉 \($u)\($pad) | [Score: \(.value.score)]"
-                    else
-                      "🏅 \(.key+1). \($u)\($pad) | [Score: \(.value.score)]"
+                    if $k == 0 then "🥇 "
+                    elif $k == 1 then "🥈 "
+                    elif $k == 2 then "🥉 "
+                    else "🏅 \($k+1). "
                     end
-                  )
+                  ) as $prefix
+                | ($prefix + $u) as $combined_string
+                | ($max_combined_len - ($combined_string | length)) as $spaces
+                | ($spaces | if . > 0 then (" " * .) else "" end) as $pad
+                | "\($combined_string)\($pad) | [Score: \($score_val)]"
               )
             | join("\n")
           ' global_leaderboard.json)
@@ -205,6 +220,630 @@ jobs:
           echo "$leaderboard" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
+      - name: 🎲 Get Random Donghua Fact
+        id: donghua-fact
+        run: |
+          DONGHUA_FACT=$(shuf -n 1 <<EOF
+          Tahukah kamu? Donghua seringkali diadaptasi dari novel wuxia atau xianxia populer!
+          Banyak donghua menampilkan konsep 'kultivasi', di mana karakter berlatih untuk mencapai keabadian.
+          Donghua 'Soul Land' (Douluo Dalu) adalah salah satu donghua 3D paling populer di Tiongkok.
+          Animasi Tiongkok modern, atau donghua, semakin populer di seluruh dunia karena kualitas visualnya.
+          Konsep 'Qi' atau energi spiritual adalah elemen kunci dalam banyak cerita donghua kultivasi.
+          Studio seperti Tencent Animation & Comics dan Bilibili adalah raksasa di industri donghua.
+          Banyak donghua menampilkan seni bela diri fantastis yang disebut 'wuxia' atau 'xianxia'.
+          Istilah 'donghua' secara harfiah berarti 'animasi Tiongkok'.
+          Genre donghua sangat beragam, dari fantasi epik hingga kehidupan sehari-hari.
+          Beberapa donghua paling terkenal seperti 'Battle Through the Heavens' dan 'A Will Eternal'.
+          Donghua seringkali memiliki alur cerita yang sangat panjang, mengikuti novel aslinya.
+          Karakter utama dalam donghua kultivasi seringkali memulai dari titik lemah dan berkembang pesat.
+          Efek visual dalam donghua 3D terus berkembang dan semakin memukau.
+          Banyak donghua yang dirilis dalam format serial mingguan.
+          Musik latar (OST) donghua seringkali sangat epik dan mendukung suasana cerita.
+          Beberapa donghua mengambil inspirasi dari mitologi dan sejarah Tiongkok.
+          Konsep 'reinkarnasi' atau 'transmigrasi' sering muncul dalam plot donghua.
+          'Martial Universe' (Wu Dong Qian Kun) adalah donghua xianxia populer lainnya.
+          Donghua 'Throne of Seal' (Shen Yin Wang Zuo) memiliki penggemar yang besar.
+          Desain karakter dalam donghua seringkali sangat detail dan indah.
+          Banyak donghua yang memiliki adaptasi game atau komik (manhua).
+          'Stellar Transformation' (Xing Chen Bian) adalah donghua sci-fi/xianxia yang unik.
+          Beberapa donghua berfokus pada pembangunan sekte atau klan.
+          'Perfect World' (Wan Mei Shi Jie) adalah donghua 3D dengan visual yang menawan.
+          Donghua seringkali menyertakan elemen humor dan romansa.
+          Konsep 'Dao' atau 'Jalan' adalah filosofi penting dalam kultivasi donghua.
+          'Swallowed Star' (Tun Shi Xing Kong) adalah donghua sci-fi dengan aksi intens.
+          Banyak donghua yang menampilkan monster atau makhluk spiritual yang kuat.
+          'The Westward' (Xi Xing Ji) adalah donghua fantasi dengan gaya seni yang khas.
+          Beberapa donghua berlatar di dunia modern dengan elemen fantasi tersembunyi.
+          'Against the Sky Supreme' (Ni Tian Xie Shen) adalah donghua dengan plot balas dendam.
+          Konsep 'pil' atau 'ramuan' sering digunakan untuk meningkatkan kultivasi.
+          'Tales of Demons and Gods' (Yao Shen Ji) adalah donghua populer lainnya.
+          Banyak donghua yang memiliki sistem peringkat kekuatan yang kompleks.
+          'Spirit Realm' (Ling Yu) adalah donghua fantasi dengan dunia yang luas.
+          Beberapa donghua menampilkan perjalanan waktu atau dunia paralel.
+          'The Great Ruler' (Da Zhu Zai) adalah donghua yang terkait dengan 'Battle Through the Heavens'.
+          Konsep 'artefak' atau 'senjata ilahi' sering menjadi bagian penting dalam donghua.
+          'Wu Geng Ji' (The Legend and the Hero) adalah donghua 3D dengan cerita yang dalam.
+          Banyak donghua yang berfokus pada persahabatan dan ikatan antar karakter.
+          'God of Martial Arts' (Wu Shen Zhu Zai) adalah donghua dengan banyak aksi.
+          Konsep 'tribulasi surgawi' adalah ujian yang harus dilewati kultivator.
+          'The Daily Life of the Immortal King' (Xian Wang de Richang Shenghuo) adalah donghua komedi.
+          Beberapa donghua memiliki plot misteri atau intrik politik.
+          'Renegade Immortal' (Xian Ni) adalah donghua yang lebih gelap dan serius.
+          Konsep 'formasi' atau 'array' digunakan untuk pertahanan atau serangan.
+          'A Record of a Mortal's Journey to Immortality' (Fan Ren Xiu Xian Chuan) dikenal realistis.
+          Banyak donghua yang menampilkan turnamen atau kompetisi kekuatan.
+          'Soul Land 2: The Unrivaled Tang Sect' adalah sekuel dari 'Soul Land'.
+          Konsep 'garis keturunan' atau 'bakat bawaan' penting dalam beberapa donghua.
+          'The King's Avatar' (Quan Zhi Gao Shou) adalah donghua e-sport yang sangat populer.
+          Beberapa donghua berfokus pada kehidupan sekolah atau akademi kultivasi.
+          'Forty Millenniums of Cultivation' adalah donghua sci-fi dengan tema kultivasi.
+          Konsep 'domain' atau 'alam pribadi' sering dikuasai oleh kultivator kuat.
+          'Spare Me, Great Lord!' (Da Wang Rao Ming) adalah donghua komedi aksi.
+          Banyak donghua yang menampilkan perjalanan panjang dan petualangan.
+          'Spirit Sword Sovereign' (Ling Jian Zun) adalah donghua dengan tema balas dendam.
+          Konsep 'karma' atau 'takdir' sering mempengaruhi alur cerita donghua.
+          'The Legend of Qin' (Qin Shi Ming Yue) adalah donghua sejarah fantasi yang terkenal.
+          Beberapa donghua memiliki gaya seni yang sangat unik dan eksperimental.
+          'Mo Dao Zu Shi' (Grandmaster of Demonic Cultivation) adalah donghua BL yang populer.
+          Konsep 'iblis' atau 'setan' sering menjadi antagonis utama.
+          'Scissor Seven' (Wu Liuqi) adalah donghua komedi aksi dengan gaya unik.
+          Banyak donghua yang menampilkan berbagai jenis binatang spiritual.
+          'The Founder of Diabolism' adalah nama lain untuk 'Mo Dao Zu Shi'.
+          Konsep 'alam rahasia' atau 'dimensi tersembunyi' sering menjadi lokasi penting.
+          'Fog Hill of Five Elements' (Wushan Wuxing) dikenal dengan animasinya yang indah.
+          Beberapa donghua berfokus pada pengembangan keterampilan atau profesi tertentu.
+          'White Cat Legend' (Da Li Si Ri Zhi) adalah donghua misteri sejarah.
+          Konsep 'kultivasi ganda' atau 'pasangan kultivasi' kadang muncul.
+          'Link Click' (Shi Guang Dai Li Ren) adalah donghua dengan plot perjalanan waktu.
+          Banyak donghua yang memiliki alur cerita yang kompleks dan banyak karakter.
+          'The Legend of Exorcism' (Tian Bao Fu Yao Lu) adalah donghua fantasi.
+          Konsep 'kekuatan elemen' (api, air, tanah, angin, logam) sering digunakan.
+          'Cinderella Chef' (Meng Qi Shi Shen) adalah donghua romansa komedi.
+          Beberapa donghua menampilkan pertarungan skala besar atau perang antar faksi.
+          'Cupid's Chocolates' (Ai Shen Qiao Ke Li) adalah donghua romansa sekolah.
+          Konsep 'dunia persilatan' atau 'jianghu' adalah latar umum di donghua wuxia.
+          'Psychic Princess' (Tong Ling Fei) adalah donghua romantis fantasi.
+          Banyak donghua yang memiliki adaptasi drama live-action.
+          'Dragon Raja' (Long Zu) adalah donghua fantasi urban.
+          Konsep 'kultivasi iblis' atau 'jalur iblis' adalah alternatif dari kultivasi biasa.
+          'The Emperor's Strategy' (Di Wang Gong Lue) adalah donghua sejarah.
+          Beberapa donghua berfokus pada pengembangan teknologi atau penemuan.
+          'The Legend of Hei' adalah film donghua yang sangat sukses.
+          Konsep 'takdir' atau 'surga' sering menjadi kekuatan yang tak terhindarkan.
+          'Spiritpact' (Ling Qi) adalah donghua BL dengan tema spiritual.
+          Banyak donghua yang menampilkan sistem klan atau keluarga besar.
+          'The Outcast' (Yi Ren Zhi Xia) adalah donghua dengan elemen supernatural modern.
+          Konsep 'reinkarnasi' sering memberikan karakter kesempatan kedua.
+          'Rakshasa Street' (Zhen Hun Jie) adalah donghua aksi fantasi.
+          Beberapa donghua berfokus pada misteri kuno atau rahasia tersembunyi.
+          'The Legend of Luo Xiaohei' adalah nama lain untuk 'The Legend of Hei'.
+          Konsep 'transformasi binatang' atau 'bentuk beast' sering dimiliki oleh karakter.
+          'The Daily Life of the Immortal King' adalah donghua yang sangat ringan dan lucu.
+          Banyak donghua yang memiliki adegan pertarungan yang sangat dinamis.
+          'Heaven Official's Blessing' (Tian Guan Ci Fu) adalah donghua BL fantasi.
+          Konsep 'elixir' atau 'pil keabadian' adalah tujuan utama kultivator.
+          'The Chronologist' (Shi Guang Zai Ji) adalah donghua dengan plot unik.
+          Beberapa donghua menampilkan sistem 'poin' atau 'kontribusi' dalam sekte.
+          'The Memory of Chang'an' (Chang An Huan Jie) adalah donghua romansa sejarah.
+          Konsep 'penguasa' atau 'kaisar' sering menjadi figur sentral.
+          'The Indomitable' (Bu Ke Bu Sai) adalah donghua aksi.
+          Banyak donghua yang diadaptasi dari web novel populer.
+          'My Cultivator Girlfriend' (Wo de Xiu Xian Nu You) adalah donghua romansa urban.
+          Konsep 'jiwa' atau 'roh' adalah inti dari kultivasi.
+          'The Legend of Futian' (Fu Tian Ji) adalah donghua fantasi.
+          Beberapa donghua menampilkan berbagai jenis senjata, dari pedang hingga busur.
+          'Grandmaster of Demonic Cultivation' adalah salah satu donghua paling berpengaruh.
+          Konsep 'alam kultivasi' sering dibagi menjadi beberapa tingkatan.
+          'The Westward' memiliki visual yang sangat berbeda dari donghua pada umumnya.
+          Banyak donghua yang memiliki komunitas penggemar yang sangat aktif.
+          'A Will Eternal' dikenal dengan humornya yang khas.
+          Konsep 'takdir abadi' adalah tujuan tertinggi bagi banyak kultivator.
+          Donghua seringkali menampilkan karakter dengan kekuatan yang terus meningkat seiring cerita.
+          Banyak donghua yang memiliki adaptasi dari manhua (komik Tiongkok).
+          Konsep 'Qi Deviation' adalah kondisi berbahaya bagi kultivator.
+          'The Founder of Diabolism' memiliki alur cerita yang kompleks dan karakter yang mendalam.
+          Beberapa donghua berfokus pada petualangan di dunia roh atau alam baka.
+          'Spirit Realm' menampilkan berbagai ras dan makhluk fantastis.
+          Konsep 'kultivasi ganda' sering melibatkan dua individu yang berlatih bersama.
+          'The Daily Life of the Immortal King' memparodikan banyak klise donghua.
+          Banyak donghua yang dianimasikan oleh studio-studio besar di Tiongkok.
+          'Throne of Seal' dikenal dengan pertarungan yang intens dan strategi.
+          Konsep 'Dao Heart' adalah fondasi mental seorang kultivator.
+          'Martial Universe' memiliki dunia yang luas dan penuh dengan bahaya.
+          Beberapa donghua menampilkan sistem 'guru-murid' yang kuat.
+          'Perfect World' memiliki visual yang memukau dan efek khusus yang canggih.
+          Konsep 'Heavenly Tribulation' adalah ujian yang harus dihadapi kultivator saat naik level.
+          'Swallowed Star' menggabungkan elemen sci-fi dengan kultivasi.
+          Banyak donghua yang memiliki cerita tentang pencarian harta karun atau warisan kuno.
+          'The Westward' adalah adaptasi modern dari kisah klasik 'Journey to the West'.
+          Konsep 'Divine Sense' memungkinkan kultivator untuk merasakan lingkungan mereka.
+          'Against the Sky Supreme' menampilkan protagonis yang sangat licik dan kuat.
+          Beberapa donghua berfokus pada pengembangan alkimia atau pembuatan jimat.
+          'Tales of Demons and Gods' menampilkan protagonis yang bereinkarnasi dengan pengetahuan masa depan.
+          Konsep 'spiritual beast' atau 'mythical beast' sering menjadi pendamping kultivator.
+          'Spirit Realm' memiliki alur cerita yang berpusat pada misteri identitas protagonis.
+          Banyak donghua yang dirilis di platform streaming seperti Bilibili dan Tencent Video.
+          'The Great Ruler' adalah bagian dari trilogi novel 'Heavenly Silkworm Potato'.
+          Konsep 'array' atau 'formasi' digunakan untuk melindungi tempat atau menjebak musuh.
+          'Wu Geng Ji' menampilkan konflik antara manusia dan dewa.
+          Beberapa donghua memiliki tema 'balas dendam' yang kuat.
+          'God of Martial Arts' menampilkan protagonis yang terus-menerus menghadapi tantangan.
+          Konsep 'kultivasi tubuh' berfokus pada penguatan fisik.
+          'The Daily Life of the Immortal King' adalah donghua yang sangat populer di kalangan remaja.
+          Banyak donghua yang memiliki adaptasi anime Jepang atau drama Korea.
+          'Renegade Immortal' dikenal karena alur ceritanya yang realistis dan brutal.
+          Konsep 'Dao Comprehension' adalah pemahaman mendalam tentang hukum alam semesta.
+          'A Record of a Mortal's Journey to Immortality' adalah salah satu donghua 3D paling realistis.
+          Beberapa donghua berfokus pada perjalanan panjang untuk menemukan kebenaran.
+          'Soul Land 2' melanjutkan kisah di dunia Tang Sect.
+          Konsep 'spiritual root' menentukan bakat alami seseorang dalam kultivasi.
+          'The King's Avatar' adalah salah satu donghua e-sport pertama yang sukses.
+          Banyak donghua yang menampilkan berbagai jenis energi spiritual selain Qi.
+          'Forty Millenniums of Cultivation' memiliki konsep kultivasi yang unik dalam latar sci-fi.
+          Konsep 'dimensi saku' atau 'ruang pribadi' sering dimiliki oleh kultivator kuat.
+          'Spare Me, Great Lord!' dikenal dengan humor sarkastiknya.
+          Beberapa donghua berfokus pada pengembangan seni bela diri kuno.
+          'Spirit Sword Sovereign' adalah donghua dengan tema reinkarnasi dan balas dendam.
+          Konsep 'karma' dapat mempengaruhi nasib karakter di sepanjang cerita.
+          'The Legend of Qin' adalah donghua dengan gaya seni yang sangat khas dan detail.
+          Banyak donghua yang menampilkan berbagai faksi atau sekte yang bersaing.
+          'Mo Dao Zu Shi' dikenal dengan alur cerita yang emosional dan kompleks.
+          Konsep 'demonic cultivation' adalah jalur kultivasi yang sering dianggap terlarang.
+          'Scissor Seven' memiliki gaya animasi yang unik dan cerita yang menyentuh.
+          Banyak donghua yang memiliki karakter pendukung yang kuat dan berkesan.
+          'The Founder of Diabolism' adalah salah satu donghua BL paling terkenal.
+          Konsep 'alam rahasia' sering berisi harta karun atau peluang kultivasi.
+          'Fog Hill of Five Elements' (Wushan Wuxing) dikenal dengan animasinya yang indah.
+          Beberapa donghua berfokus pada pengembangan keterampilan atau profesi tertentu.
+          'White Cat Legend' (Da Li Si Ri Zhi) adalah donghua misteri sejarah.
+          Konsep 'kultivasi ganda' atau 'pasangan kultivasi' kadang muncul.
+          'Link Click' (Shi Guang Dai Li Ren) adalah donghua dengan plot perjalanan waktu.
+          Banyak donghua yang memiliki alur cerita yang kompleks dan banyak karakter.
+          'The Legend of Exorcism' (Tian Bao Fu Yao Lu) adalah donghua fantasi.
+          Konsep 'kekuatan elemen' (api, air, tanah, angin, logam) sering digunakan.
+          'Cinderella Chef' (Meng Qi Shi Shen) adalah donghua romansa komedi.
+          Beberapa donghua menampilkan pertarungan skala besar atau perang antar faksi.
+          'Cupid's Chocolates' (Ai Shen Qiao Ke Li) adalah donghua romansa sekolah.
+          Konsep 'dunia persilatan' atau 'jianghu' adalah latar umum di donghua wuxia.
+          'Psychic Princess' (Tong Ling Fei) adalah donghua romantis fantasi.
+          Banyak donghua yang memiliki adaptasi drama live-action.
+          'Dragon Raja' (Long Zu) adalah donghua fantasi urban.
+          Konsep 'kultivasi iblis' atau 'jalur iblis' adalah alternatif dari kultivasi biasa.
+          'The Emperor's Strategy' (Di Wang Gong Lue) adalah donghua sejarah.
+          Beberapa donghua berfokus pada pengembangan teknologi atau penemuan.
+          'The Legend of Hei' adalah film donghua yang sangat sukses.
+          Konsep 'takdir' atau 'surga' sering menjadi kekuatan yang tak terhindarkan.
+          'Spiritpact' (Ling Qi) adalah donghua BL dengan tema spiritual.
+          Banyak donghua yang menampilkan sistem klan atau keluarga besar.
+          'The Outcast' (Yi Ren Zhi Xia) adalah donghua dengan elemen supernatural modern.
+          Konsep 'reinkarnasi' sering memberikan karakter kesempatan kedua.
+          'Rakshasa Street' (Zhen Hun Jie) adalah donghua aksi fantasi.
+          Beberapa donghua berfokus pada misteri kuno atau rahasia tersembunyi.
+          'The Legend of Luo Xiaohei' adalah nama lain untuk 'The Legend of Hei'.
+          Konsep 'transformasi binatang' atau 'bentuk beast' sering dimiliki oleh karakter.
+          'The Daily Life of the Immortal King' adalah donghua yang sangat ringan dan lucu.
+          Banyak donghua yang memiliki adegan pertarungan yang sangat dinamis.
+          'Heaven Official's Blessing' (Tian Guan Ci Fu) adalah donghua BL fantasi.
+          Konsep 'elixir' atau 'pil keabadian' adalah tujuan utama kultivator.
+          'The Chronologist' (Shi Guang Zai Ji) adalah donghua dengan plot unik.
+          Beberapa donghua menampilkan sistem 'poin' atau 'kontribusi' dalam sekte.
+          'The Memory of Chang'an' (Chang An Huan Jie) adalah donghua romansa sejarah.
+          Konsep 'penguasa' atau 'kaisar' sering menjadi figur sentral.
+          'The Indomitable' (Bu Ke Bu Sai) adalah donghua aksi.
+          Banyak donghua yang diadaptasi dari web novel populer.
+          'My Cultivator Girlfriend' (Wo de Xiu Xian Nu You) adalah donghua romansa urban.
+          Konsep 'jiwa' atau 'roh' adalah inti dari kultivasi.
+          'The Legend of Futian' (Fu Tian Ji) adalah donghua fantasi.
+          Beberapa donghua menampilkan berbagai jenis senjata, dari pedang hingga busur.
+          'Grandmaster of Demonic Cultivation' adalah salah satu donghua paling berpengaruh.
+          Konsep 'alam kultivasi' sering dibagi menjadi beberapa tingkatan.
+          'The Westward' memiliki visual yang sangat berbeda dari donghua pada umumnya.
+          Banyak donghua yang memiliki komunitas penggemar yang sangat aktif.
+          'A Will Eternal' dikenal dengan humornya yang khas.
+          Konsep 'takdir abadi' adalah tujuan tertinggi bagi banyak kultivator.
+          Donghua seringkali menampilkan karakter dengan kekuatan yang terus meningkat seiring cerita.
+          Banyak donghua yang memiliki adaptasi dari manhua (komik Tiongkok).
+          Konsep 'Qi Deviation' adalah kondisi berbahaya bagi kultivator.
+          'The Founder of Diabolism' memiliki alur cerita yang kompleks dan karakter yang mendalam.
+          Beberapa donghua berfokus pada petualangan di dunia roh atau alam baka.
+          'Spirit Realm' menampilkan berbagai ras dan makhluk fantastis.
+          Konsep 'kultivasi ganda' sering melibatkan dua individu yang berlatih bersama.
+          'The Daily Life of the Immortal King' memparodikan banyak klise donghua.
+          Banyak donghua yang dianimasikan oleh studio-studio besar di Tiongkok.
+          'Throne of Seal' dikenal dengan pertarungan yang intens dan strategi.
+          Konsep 'Dao Heart' adalah fondasi mental seorang kultivator.
+          'Martial Universe' memiliki dunia yang luas dan penuh dengan bahaya.
+          Beberapa donghua menampilkan sistem 'guru-murid' yang kuat.
+          'Perfect World' memiliki visual yang memukau dan efek khusus yang canggih.
+          Konsep 'Heavenly Tribulation' adalah ujian yang harus dihadapi kultivator saat naik level.
+          'Swallowed Star' menggabungkan elemen sci-fi dengan kultivasi.
+          Banyak donghua yang memiliki cerita tentang pencarian harta karun atau warisan kuno.
+          'The Westward' adalah adaptasi modern dari kisah klasik 'Journey to the West'.
+          Konsep 'Divine Sense' memungkinkan kultivator untuk merasakan lingkungan mereka.
+          'Against the Sky Supreme' menampilkan protagonis yang sangat licik dan kuat.
+          Beberapa donghua berfokus pada pengembangan alkimia atau pembuatan jimat.
+          'Tales of Demons and Gods' menampilkan protagonis yang bereinkarnasi dengan pengetahuan masa depan.
+          Konsep 'spiritual beast' atau 'mythical beast' sering menjadi pendamping kultivator.
+          'Spirit Realm' memiliki alur cerita yang berpusat pada misteri identitas protagonis.
+          Banyak donghua yang dirilis di platform streaming seperti Bilibili dan Tencent Video.
+          'The Great Ruler' adalah bagian dari trilogi novel 'Heavenly Silkworm Potato'.
+          Konsep 'array' atau 'formasi' digunakan untuk melindungi tempat atau menjebak musuh.
+          'Wu Geng Ji' menampilkan konflik antara manusia dan dewa.
+          Beberapa donghua memiliki tema 'balas dendam' yang kuat.
+          'God of Martial Arts' menampilkan protagonis yang terus-menerus menghadapi tantangan.
+          Konsep 'kultivasi tubuh' berfokus pada penguatan fisik.
+          'The Daily Life of the Immortal King' adalah donghua yang sangat populer di kalangan remaja.
+          Banyak donghua yang memiliki adaptasi anime Jepang atau drama Korea.
+          'Renegade Immortal' dikenal karena alur ceritanya yang realistis dan brutal.
+          Konsep 'Dao Comprehension' adalah pemahaman mendalam tentang hukum alam semesta.
+          'A Record of a Mortal's Journey to Immortality' adalah salah satu donghua 3D paling realistis.
+          Beberapa donghua berfokus pada perjalanan panjang untuk menemukan kebenaran.
+          'Soul Land 2' melanjutkan kisah di dunia Tang Sect.
+          Konsep 'spiritual root' menentukan bakat alami seseorang dalam kultivasi.
+          'The King's Avatar' adalah salah satu donghua e-sport pertama yang sukses.
+          Banyak donghua yang menampilkan berbagai jenis energi spiritual selain Qi.
+          'Forty Millenniums of Cultivation' memiliki konsep kultivasi yang unik dalam latar sci-fi.
+          Konsep 'dimensi saku' atau 'ruang pribadi' sering dimiliki oleh kultivator kuat.
+          'Spare Me, Great Lord!' dikenal dengan humor sarkastiknya.
+          Beberapa donghua berfokus pada pengembangan seni bela diri kuno.
+          'Spirit Sword Sovereign' adalah donghua dengan tema reinkarnasi dan balas dendam.
+          Konsep 'karma' dapat mempengaruhi nasib karakter di sepanjang cerita.
+          'The Legend of Qin' adalah donghua dengan gaya seni yang sangat khas dan detail.
+          Banyak donghua yang menampilkan berbagai faksi atau sekte yang bersaing.
+          'Mo Dao Zu Shi' dikenal dengan alur cerita yang emosional dan kompleks.
+          Konsep 'demonic cultivation' adalah jalur kultivasi yang sering dianggap terlarang.
+          'Scissor Seven' memiliki gaya animasi yang unik dan cerita yang menyentuh.
+          Banyak donghua yang memiliki karakter pendukung yang kuat dan berkesan.
+          'The Founder of Diabolism' adalah salah satu donghua BL paling terkenal.
+          Konsep 'alam rahasia' sering berisi harta karun atau peluang kultivasi.
+          'Fog Hill of Five Elements' (Wushan Wuxing) dikenal dengan animasinya yang indah.
+          Beberapa donghua berfokus pada pengembangan keterampilan atau profesi tertentu.
+          'White Cat Legend' (Da Li Si Ri Zhi) adalah donghua misteri sejarah.
+          Konsep 'kultivasi ganda' atau 'pasangan kultivasi' kadang muncul.
+          'Link Click' (Shi Guang Dai Li Ren) adalah donghua dengan plot perjalanan waktu.
+          Banyak donghua yang memiliki alur cerita yang kompleks dan banyak karakter.
+          'The Legend of Exorcism' (Tian Bao Fu Yao Lu) adalah donghua fantasi.
+          Konsep 'kekuatan elemen' (api, air, tanah, angin, logam) sering digunakan.
+          'Cinderella Chef' (Meng Qi Shi Shen) adalah donghua romansa komedi.
+          Beberapa donghua menampilkan pertarungan skala besar atau perang antar faksi.
+          'Cupid's Chocolates' (Ai Shen Qiao Ke Li) adalah donghua romansa sekolah.
+          Konsep 'dunia persilatan' atau 'jianghu' adalah latar umum di donghua wuxia.
+          'Psychic Princess' (Tong Ling Fei) adalah donghua romantis fantasi.
+          Banyak donghua yang memiliki adaptasi drama live-action.
+          'Dragon Raja' (Long Zu) adalah donghua fantasi urban.
+          Konsep 'kultivasi iblis' atau 'jalur iblis' adalah alternatif dari kultivasi biasa.
+          'The Emperor's Strategy' (Di Wang Gong Lue) adalah donghua sejarah.
+          Beberapa donghua berfokus pada pengembangan teknologi atau penemuan.
+          'The Legend of Hei' adalah film donghua yang sangat sukses.
+          Konsep 'takdir' atau 'surga' sering menjadi kekuatan yang tak terhindarkan.
+          'Spiritpact' (Ling Qi) adalah donghua BL dengan tema spiritual.
+          Banyak donghua yang menampilkan sistem klan atau keluarga besar.
+          'The Outcast' (Yi Ren Zhi Xia) adalah donghua dengan elemen supernatural modern.
+          Konsep 'reinkarnasi' sering memberikan karakter kesempatan kedua.
+          'Rakshasa Street' (Zhen Hun Jie) adalah donghua aksi fantasi.
+          Beberapa donghua berfokus pada misteri kuno atau rahasia tersembunyi.
+          'The Legend of Luo Xiaohei' adalah nama lain untuk 'The Legend of Hei'.
+          Konsep 'transformasi binatang' atau 'bentuk beast' sering dimiliki oleh karakter.
+          'The Daily Life of the Immortal King' adalah donghua yang sangat ringan dan lucu.
+          Banyak donghua yang memiliki adegan pertarungan yang sangat dinamis.
+          'Heaven Official's Blessing' (Tian Guan Ci Fu) adalah donghua BL fantasi.
+          Konsep 'elixir' atau 'pil keabadian' adalah tujuan utama kultivator.
+          'The Chronologist' (Shi Guang Zai Ji) adalah donghua dengan plot unik.
+          Beberapa donghua menampilkan sistem 'poin' atau 'kontribusi' dalam sekte.
+          'The Memory of Chang'an' (Chang An Huan Jie) adalah donghua romansa sejarah.
+          Konsep 'penguasa' atau 'kaisar' sering menjadi figur sentral.
+          'The Indomitable' (Bu Ke Bu Sai) adalah donghua aksi.
+          Banyak donghua yang diadaptasi dari web novel populer.
+          'My Cultivator Girlfriend' (Wo de Xiu Xian Nu You) adalah donghua romansa urban.
+          Konsep 'jiwa' atau 'roh' adalah inti dari kultivasi.
+          'The Legend of Futian' (Fu Tian Ji) adalah donghua fantasi.
+          Beberapa donghua menampilkan berbagai jenis senjata, dari pedang hingga busur.
+          'Grandmaster of Demonic Cultivation' adalah salah satu donghua paling berpengaruh.
+          Konsep 'alam kultivasi' sering dibagi menjadi beberapa tingkatan.
+          'The Westward' memiliki visual yang sangat berbeda dari donghua pada umumnya.
+          Banyak donghua yang memiliki komunitas penggemar yang sangat aktif.
+          'A Will Eternal' dikenal dengan humornya yang khas.
+          Konsep 'takdir abadi' adalah tujuan tertinggi bagi banyak kultivator.
+          Donghua seringkali menampilkan karakter dengan kekuatan yang terus meningkat seiring cerita.
+          Banyak donghua yang memiliki adaptasi dari manhua (komik Tiongkok).
+          Konsep 'Qi Deviation' adalah kondisi berbahaya bagi kultivator.
+          'The Founder of Diabolism' memiliki alur cerita yang kompleks dan karakter yang mendalam.
+          Beberapa donghua berfokus pada petualangan di dunia roh atau alam baka.
+          'Spirit Realm' menampilkan berbagai ras dan makhluk fantastis.
+          Konsep 'kultivasi ganda' sering melibatkan dua individu yang berlatih bersama.
+          'The Daily Life of the Immortal King' memparodikan banyak klise donghua.
+          Banyak donghua yang dianimasikan oleh studio-studio besar di Tiongkok.
+          'Throne of Seal' dikenal dengan pertarungan yang intens dan strategi.
+          Konsep 'Dao Heart' adalah fondasi mental seorang kultivator.
+          'Martial Universe' memiliki dunia yang luas dan penuh dengan bahaya.
+          Beberapa donghua menampilkan sistem 'guru-murid' yang kuat.
+          'Perfect World' memiliki visual yang memukau dan efek khusus yang canggih.
+          Konsep 'Heavenly Tribulation' adalah ujian yang harus dihadapi kultivator saat naik level.
+          'Swallowed Star' menggabungkan elemen sci-fi dengan kultivasi.
+          Banyak donghua yang memiliki cerita tentang pencarian harta karun atau warisan kuno.
+          'The Westward' adalah adaptasi modern dari kisah klasik 'Journey to the West'.
+          Konsep 'Divine Sense' memungkinkan kultivator untuk merasakan lingkungan mereka.
+          'Against the Sky Supreme' menampilkan protagonis yang sangat licik dan kuat.
+          Beberapa donghua berfokus pada pengembangan alkimia atau pembuatan jimat.
+          'Tales of Demons and Gods' menampilkan protagonis yang bereinkarnasi dengan pengetahuan masa depan.
+          Konsep 'spiritual beast' atau 'mythical beast' sering menjadi pendamping kultivator.
+          'Spirit Realm' memiliki alur cerita yang berpusat pada misteri identitas protagonis.
+          Banyak donghua yang dirilis di platform streaming seperti Bilibili dan Tencent Video.
+          'The Great Ruler' adalah bagian dari trilogi novel 'Heavenly Silkworm Potato'.
+          Konsep 'array' atau 'formasi' digunakan untuk melindungi tempat atau menjebak musuh.
+          'Wu Geng Ji' menampilkan konflik antara manusia dan dewa.
+          Beberapa donghua memiliki tema 'balas dendam' yang kuat.
+          'God of Martial Arts' menampilkan protagonis yang terus-menerus menghadapi tantangan.
+          Konsep 'kultivasi tubuh' berfokus pada penguatan fisik.
+          'The Daily Life of the Immortal King' adalah donghua yang sangat populer di kalangan remaja.
+          Banyak donghua yang memiliki adaptasi anime Jepang atau drama Korea.
+          'Renegade Immortal' dikenal karena alur ceritanya yang realistis dan brutal.
+          Konsep 'Dao Comprehension' adalah pemahaman mendalam tentang hukum alam semesta.
+          'A Record of a Mortal's Journey to Immortality' adalah salah satu donghua 3D paling realistis.
+          Beberapa donghua berfokus pada perjalanan panjang untuk menemukan kebenaran.
+          'Soul Land 2' melanjutkan kisah di dunia Tang Sect.
+          Konsep 'spiritual root' menentukan bakat alami seseorang dalam kultivasi.
+          'The King's Avatar' adalah salah satu donghua e-sport pertama yang sukses.
+          Banyak donghua yang menampilkan berbagai jenis energi spiritual selain Qi.
+          'Forty Millenniums of Cultivation' memiliki konsep kultivasi yang unik dalam latar sci-fi.
+          Konsep 'dimensi saku' atau 'ruang pribadi' sering dimiliki oleh kultivator kuat.
+          'Spare Me, Great Lord!' dikenal dengan humor sarkastiknya.
+          Beberapa donghua berfokus pada pengembangan seni bela diri kuno.
+          'Spirit Sword Sovereign' adalah donghua dengan tema reinkarnasi dan balas dendam.
+          Konsep 'karma' dapat mempengaruhi nasib karakter di sepanjang cerita.
+          'The Legend of Qin' adalah donghua dengan gaya seni yang sangat khas dan detail.
+          Banyak donghua yang menampilkan berbagai faksi atau sekte yang bersaing.
+          'Mo Dao Zu Shi' dikenal dengan alur cerita yang emosional dan kompleks.
+          Konsep 'demonic cultivation' adalah jalur kultivasi yang sering dianggap terlarang.
+          'Scissor Seven' memiliki gaya animasi yang unik dan cerita yang menyentuh.
+          Banyak donghua yang memiliki karakter pendukung yang kuat dan berkesan.
+          'The Founder of Diabolism' adalah salah satu donghua BL paling terkenal.
+          Konsep 'alam rahasia' sering berisi harta karun atau peluang kultivasi.
+          'Fog Hill of Five Elements' (Wushan Wuxing) dikenal dengan animasinya yang indah.
+          Beberapa donghua berfokus pada pengembangan keterampilan atau profesi tertentu.
+          'White Cat Legend' (Da Li Si Ri Zhi) adalah donghua misteri sejarah.
+          Konsep 'kultivasi ganda' atau 'pasangan kultivasi' kadang muncul.
+          'Link Click' (Shi Guang Dai Li Ren) adalah donghua dengan plot perjalanan waktu.
+          Banyak donghua yang memiliki alur cerita yang kompleks dan banyak karakter.
+          'The Legend of Exorcism' (Tian Bao Fu Yao Lu) adalah donghua fantasi.
+          Konsep 'kekuatan elemen' (api, air, tanah, angin, logam) sering digunakan.
+          'Cinderella Chef' (Meng Qi Shi Shen) adalah donghua romansa komedi.
+          Beberapa donghua menampilkan pertarungan skala besar atau perang antar faksi.
+          'Cupid's Chocolates' (Ai Shen Qiao Ke Li) adalah donghua romansa sekolah.
+          Konsep 'dunia persilatan' atau 'jianghu' adalah latar umum di donghua wuxia.
+          'Psychic Princess' (Tong Ling Fei) adalah donghua romantis fantasi.
+          Banyak donghua yang memiliki adaptasi drama live-action.
+          'Dragon Raja' (Long Zu) adalah donghua fantasi urban.
+          Konsep 'kultivasi iblis' atau 'jalur iblis' adalah alternatif dari kultivasi biasa.
+          'The Emperor's Strategy' (Di Wang Gong Lue) adalah donghua sejarah.
+          Beberapa donghua berfokus pada pengembangan teknologi atau penemuan.
+          'The Legend of Hei' adalah film donghua yang sangat sukses.
+          Konsep 'takdir' atau 'surga' sering menjadi kekuatan yang tak terhindarkan.
+          'Spiritpact' (Ling Qi) adalah donghua BL dengan tema spiritual.
+          Banyak donghua yang menampilkan sistem klan atau keluarga besar.
+          'The Outcast' (Yi Ren Zhi Xia) adalah donghua dengan elemen supernatural modern.
+          Konsep 'reinkarnasi' sering memberikan karakter kesempatan kedua.
+          'Rakshasa Street' (Zhen Hun Jie) adalah donghua aksi fantasi.
+          Beberapa donghua berfokus pada misteri kuno atau rahasia tersembunyi.
+          'The Legend of Luo Xiaohei' adalah nama lain untuk 'The Legend of Hei'.
+          Konsep 'transformasi binatang' atau 'bentuk beast' sering dimiliki oleh karakter.
+          'The Daily Life of the Immortal King' adalah donghua yang sangat ringan dan lucu.
+          Banyak donghua yang memiliki adegan pertarungan yang sangat dinamis.
+          'Heaven Official's Blessing' (Tian Guan Ci Fu) adalah donghua BL fantasi.
+          Konsep 'elixir' atau 'pil keabadian' adalah tujuan utama kultivator.
+          'The Chronologist' (Shi Guang Zai Ji) adalah donghua dengan plot unik.
+          Beberapa donghua menampilkan sistem 'poin' atau 'kontribusi' dalam sekte.
+          'The Memory of Chang'an' (Chang An Huan Jie) adalah donghua romansa sejarah.
+          Konsep 'penguasa' atau 'kaisar' sering menjadi figur sentral.
+          'The Indomitable' (Bu Ke Bu Sai) adalah donghua aksi.
+          Banyak donghua yang diadaptasi dari web novel populer.
+          'My Cultivator Girlfriend' (Wo de Xiu Xian Nu You) adalah donghua romansa urban.
+          Konsep 'jiwa' atau 'roh' adalah inti dari kultivasi.
+          'The Legend of Futian' (Fu Tian Ji) adalah donghua fantasi.
+          Beberapa donghua menampilkan berbagai jenis senjata, dari pedang hingga busur.
+          'Grandmaster of Demonic Cultivation' adalah salah satu donghua paling berpengaruh.
+          Konsep 'alam kultivasi' sering dibagi menjadi beberapa tingkatan.
+          'The Westward' memiliki visual yang sangat berbeda dari donghua pada umumnya.
+          Banyak donghua yang memiliki komunitas penggemar yang sangat aktif.
+          'A Will Eternal' dikenal dengan humornya yang khas.
+          Konsep 'takdir abadi' adalah tujuan tertinggi bagi banyak kultivator.
+          Donghua 'Battle Through the Heavens' dikenal karena karakter utamanya, Xiao Yan.
+          Banyak donghua 3D menggunakan teknologi motion capture untuk animasi yang lebih realistis.
+          Konsep 'Divine Beasts' atau 'Hewan Ilahi' sering menjadi kekuatan besar.
+          'Soul Land' adalah salah satu donghua pertama yang mencapai miliaran penayangan.
+          Beberapa donghua berfokus pada tema balas dendam dan kebangkitan.
+          'Martial Universe' menampilkan sistem klan yang kompleks dan banyak faksi.
+          Konsep 'Pill Master' atau 'Alkemis' adalah profesi penting dalam kultivasi.
+          'Throne of Seal' memiliki protagonist yang berjuang untuk melindungi umat manusia.
+          Banyak donghua didanai oleh perusahaan teknologi besar seperti Tencent dan Bilibili.
+          'Stellar Transformation' mengikuti perjalanan Qin Yu dalam mencapai keabadian.
+          Konsep 'Immortal Realm' adalah alam yang lebih tinggi yang ingin dicapai kultivator.
+          'Perfect World' didasarkan pada novel Xianxia populer oleh Chen Dong.
+          Beberapa donghua memiliki episode khusus atau ONA (Original Net Animation).
+          'Swallowed Star' menampilkan Luo Feng, seorang seniman bela diri yang berjuang di Bumi pasca-apokaliptik.
+          Konsep 'Space Ring' atau 'Cincin Dimensi' sering digunakan untuk menyimpan barang.
+          'The Westward' memiliki alur cerita yang berani dan berbeda dari versi aslinya.
+          Banyak donghua yang berfokus pada pengembangan 'Skill' atau 'Kemampuan Khusus'.
+          'Against the Sky Supreme' adalah donghua dengan alur cepat dan banyak pertarungan.
+          Konsep 'Spirit Stone' atau 'Batu Spiritual' digunakan sebagai mata uang dan sumber energi.
+          'Tales of Demons and Gods' seringkali menampilkan adegan duel yang seru.
+          Beberapa donghua menampilkan perjalanan seorang pahlawan dari nol menjadi legenda.
+          'Spirit Realm' adalah donghua yang menggabungkan unsur fantasi dan misteri.
+          Konsep 'Body Tempering' adalah tahap awal kultivasi untuk memperkuat tubuh.
+          'The Great Ruler' adalah lanjutan dari alam semesta yang sama dengan 'Battle Through the Heavens'.
+          Banyak donghua menampilkan 'Heavenly Treasures' atau harta karun surga.
+          'Wu Geng Ji' terkenal dengan grafis 3D yang sangat baik dan cerita epik.
+          Konsep 'Inner Demon' adalah rintangan mental yang harus diatasi kultivator.
+          'God of Martial Arts' menampilkan kisah seorang pemuda yang bangkit dari penindasan.
+          Beberapa donghua memiliki tema 'persaingan' yang kuat antar kultivator.
+          'The Daily Life of the Immortal King' sangat populer karena karakternya yang santai namun kuat.
+          Konsep 'Grandmaster' adalah gelar bagi kultivator yang sangat terampil.
+          'Renegade Immortal' mengeksplorasi moralitas di jalur kultivasi yang kejam.
+          Banyak donghua menampilkan 'spiritual beasts' yang dapat menjadi pendamping setia.
+          'A Record of a Mortal's Journey to Immortality' menonjolkan aspek realistis dari perjalanan kultivasi.
+          Konsep 'Array Master' adalah seseorang yang ahli dalam membentuk formasi.
+          'Soul Land 2: The Unrivaled Tang Sect' memperkenalkan karakter baru yang menarik.
+          Beberapa donghua berfokus pada kehidupan di akademi seni bela diri.
+          'The King's Avatar' membawa genre e-sport ke dalam animasi.
+          Konsep 'Divine Realm' atau 'Alam Ilahi' adalah tujuan tertinggi bagi para dewa.
+          'Forty Millenniums of Cultivation' memiliki pandangan unik tentang masa depan kultivasi.
+          Banyak donghua menampilkan 'space rings' untuk menyimpan berbagai item.
+          'Spare Me, Great Lord!' dikenal dengan narasi yang kocak dan penuh kejutan.
+          Konsep 'Enlightenment' adalah momen pencerahan dalam kultivasi.
+          'Spirit Sword Sovereign' memiliki plot reinkarnasi dengan tujuan balas dendam.
+          Beberapa donghua menampilkan 'sealing techniques' atau teknik penyegelan.
+          'The Legend of Qin' adalah salah satu donghua 3D tertua yang masih berlanjut.
+          Konsep 'Demon Race' adalah salah satu ras yang sering menjadi musuh.
+          'Mo Dao Zu Shi' dikenal dengan visualnya yang estetis dan penceritaan yang kuat.
+          Banyak donghua menampilkan 'Heavenly Dao' sebagai kekuatan alam semesta.
+          'Scissor Seven' adalah donghua yang memiliki banyak referensi budaya pop.
+          Konsep 'Bloodline Awakening' adalah bangkitnya kekuatan tersembunyi.
+          'The Founder of Diabolism' memiliki pasangan karakter utama yang ikonik.
+          Beberapa donghua berfokus pada perjalanan untuk mencari 'Dao' pribadi.
+          'Fog Hill of Five Elements' memiliki gaya seni yang terinspirasi dari lukisan tinta Tiongkok.
+          Konsep 'Artifact Refining' adalah seni membuat artefak spiritual.
+          'White Cat Legend' adalah donghua yang memadukan misteri dengan humor.
+          Banyak donghua menampilkan 'spiritual energy' yang mengisi dunia kultivasi.
+          'Link Click' mengeksplorasi dampak dari perubahan masa lalu.
+          Konsep 'True Immortal' adalah kultivator yang telah mencapai keabadian sejati.
+          'The Legend of Exorcism' menampilkan tim eksorsis yang melindungi dunia.
+          Beberapa donghua berfokus pada pertarungan melawan entitas kosmik.
+          'Cinderella Chef' menghadirkan kisah cinta yang manis dengan latar kuliner.
+          Konsep 'Heavenly Demon' adalah iblis yang sangat kuat.
+          'Cupid's Chocolates' adalah donghua yang berpusat pada kekacauan romansa.
+          Banyak donghua yang menggunakan sulih suara bahasa Mandarin (Putonghua).
+          'Psychic Princess' menampilkan kisah cinta antara seorang putri dan pangeran iblis.
+          Konsep 'Cultivation Technique' adalah metode untuk berlatih dan meningkatkan kekuatan.
+          'Dragon Raja' menampilkan pertempuran epik antara manusia dan naga.
+          Beberapa donghua berfokus pada pembangunan kembali sekte yang runtuh.
+          'The Emperor's Strategy' adalah donghua yang penuh dengan intrik kerajaan.
+          Konsep 'Dao Companion' adalah pasangan kultivasi yang berlatih bersama.
+          'The Legend of Hei' adalah film yang sangat populer di Tiongkok.
+          Banyak donghua yang memiliki durasi episode yang bervariasi.
+          'Spiritpact' membahas tema ikatan dan takdir antara dua jiwa.
+          Konsep 'Soul Power' adalah energi vital yang dimiliki karakter.
+          'The Outcast' menampilkan dunia di mana orang-orang memiliki kemampuan supernatural.
+          Beberapa donghua berfokus pada penyelesaian konflik antar klan.
+          'Rakshasa Street' menampilkan penjaga roh yang melawan iblis.
+          Konsep 'Golden Core' adalah inti energi yang terbentuk pada tahap kultivasi tertentu.
+          'The Daily Life of the Immortal King' adalah salah satu donghua komedi terbaik.
+          Banyak donghua yang merilis 'special episodes' atau episode bonus.
+          'Heaven Official's Blessing' adalah donghua yang diadaptasi dari novel BL populer.
+          Konsep 'Spatial Distortion' adalah kemampuan untuk memanipulasi ruang.
+          'The Chronologist' adalah donghua yang membuat penonton berpikir.
+          Beberapa donghua menampilkan 'Divine Weapons' atau senjata ilahi.
+          'The Memory of Chang'an' menampilkan romansa yang berkembang di istana.
+          Konsep 'Tribulation Lightning' adalah petir yang turun saat kultivator naik level.
+          'The Indomitable' adalah donghua aksi dengan banyak koreografi pertarungan.
+          Banyak donghua yang memiliki adegan-adegan emosional yang kuat.
+          'My Cultivator Girlfriend' menampilkan hubungan antara kultivator dan manusia biasa.
+          Konsep 'Divine Ability' adalah kemampuan luar biasa yang didapat melalui kultivasi.
+          'The Legend of Futian' menampilkan protagonis yang menghadapi banyak rintangan.
+          Beberapa donghua menampilkan 'Demon Beasts' yang berfungsi sebagai musuh atau teman.
+          'Grandmaster of Demonic Cultivation' memiliki alur cerita yang kaya dan kompleks.
+          Konsep 'Immortal Ascension' adalah proses naik ke alam keabadian.
+          'The Westward' adalah donghua yang terkenal dengan karakter-karakternya yang unik.
+          Banyak donghua yang memiliki merchandise resmi.
+          'A Will Eternal' dikenal dengan lelucon dan momen kocaknya.
+          Konsep 'Ethereal Immortal' adalah bentuk kultivasi yang lebih tinggi.
+          Donghua sering menggunakan latar belakang yang indah dan detail.
+          Banyak donghua yang punya lagu tema yang mudah diingat dan populer.
+          Konsep 'Qi Gathering Realm' adalah tahap awal kultivasi.
+          'Soul Land' populer karena kombinasi pertarungan, romansa, dan fantasi.
+          Beberapa donghua mengeksplorasi tema pengorbanan dan penebusan.
+          'Martial Universe' mengisahkan perjalanan Lin Dong untuk menjadi kuat.
+          Konsep 'Sacred Beast' adalah makhluk mistis yang sangat dihormati.
+          'Throne of Seal' menampilkan protagonis yang menjadi Ksatria Suci.
+          Banyak donghua yang diadaptasi dari seri manhua yang sedang berjalan.
+          'Stellar Transformation' melibatkan berbagai alam semesta dan dimensi.
+          Konsep 'Heavenly Dao' adalah hukum alam semesta yang mengatur kultivasi.
+          'Perfect World' mengikuti kisah Shi Hao, seorang jenius yang tak terkalahkan.
+          Beberapa donghua fokus pada pengembangan bakat tersembunyi.
+          'Swallowed Star' menampilkan manusia yang melawan monster setelah bencana.
+          Konsep 'Divine Weapon' adalah senjata yang memiliki kekuatan luar biasa.
+          'The Westward' dikenal dengan pesan filosofisnya yang dalam.
+          Banyak donghua yang menampilkan sistem poin reputasi di sekte.
+          'Against the Sky Supreme' adalah donghua yang penuh dengan kejutan.
+          Konsep 'Array Master' adalah profesi penting dalam pertahanan dan serangan.
+          'Tales of Demons and Gods' menampilkan seorang ahli yang kembali ke masa lalu.
+          Beberapa donghua melibatkan 'Ancient Ruins' atau reruntuhan kuno.
+          'Spirit Realm' menampilkan protagonis yang mencari kebenaran tentang orang tuanya.
+          Konsep 'Forbidden Arts' adalah teknik yang berbahaya atau terlarang.
+          'The Great Ruler' menampilkan pertarungan antara berbagai Penguasa Agung.
+          Banyak donghua yang merilis episode dalam format 4K atau HD.
+          'Wu Geng Ji' memiliki narasi yang kuat tentang perjuangan melawan penindasan.
+          Konsep 'Heart Demon' adalah cobaan mental bagi kultivator.
+          'God of Martial Arts' menampilkan kisah Lin Feng yang mencapai puncak seni bela diri.
+          Beberapa donghua memiliki tema 'pengkhianatan' dan 'balas dendam'.
+          'The Daily Life of the Immortal King' adalah komedi slice-of-life dengan kekuatan super.
+          Banyak donghua yang telah ditayangkan di berbagai negara.
+          'Renegade Immortal' adalah cerita yang lebih gelap tentang kultivasi yang tak kenal ampun.
+          Konsep 'Spiritual Energy' adalah dasar dari semua kultivasi.
+          'A Record of a Mortal's Journey to Immortality' adalah donghua 3D yang sangat diakui.
+          Beberapa donghua melibatkan 'Immortal Pills' atau pil keabadian.
+          'Soul Land 2' menampilkan generasi baru master roh yang kuat.
+          Konsep 'True Spirit' adalah bentuk energi vital yang lebih murni.
+          'The King's Avatar' membawa penonton ke dalam dunia e-sport profesional.
+          Banyak donghua yang memiliki alur cerita yang berfokus pada pertumbuhan karakter.
+          'Forty Millenniums of Cultivation' adalah kombinasi unik dari sci-fi dan fantasi.
+          Konsep 'Space-Time Law' adalah pemahaman tentang ruang dan waktu.
+          'Spare Me, Great Lord!' menampilkan humor yang cerdas dan karakter yang unik.
+          Beberapa donghua berfokus pada persahabatan sejati dan kesetiaan.
+          'Spirit Sword Sovereign' adalah donghua yang menampilkan dunia kultivasi yang luas.
+          Konsep 'Cause and Effect' (Karma) adalah tema umum di banyak donghua.
+          'The Legend of Qin' adalah salah satu donghua fantasi wuxia paling ikonik.
+          Banyak donghua yang menampilkan berbagai jenis 'Sekolah' atau 'Sekte'.
+          'Mo Dao Zu Shi' dikenal karena karakternya yang kompleks dan hubungan emosional.
+          Konsep 'Yin and Yang' adalah keseimbangan dasar di alam semesta kultivasi.
+          'Scissor Seven' memiliki animasi tangan yang sangat ekspresif.
+          Beberapa donghua berfokus pada perjalanan untuk menemukan jati diri.
+          'The Founder of Diabolism' menampilkan investigasi misteri supranatural.
+          Konsep 'Heavenly Tribulation' adalah ujian dari langit bagi kultivator.
+          'Fog Hill of Five Elements' dikenal karena visualnya yang memukau dan unik.
+          Banyak donghua yang dirilis di YouTube dengan subtitle berbagai bahasa.
+          'White Cat Legend' menampilkan kucing peliharaan yang memiliki kekuatan mistis.
+          Konsep 'Dual Cultivation' (Kultivasi Ganda) adalah metode langka untuk meningkatkan kekuatan.
+          'Link Click' mengeksplorasi tema moralitas dan konsekuensi tindakan.
+          Beberapa donghua berfokus pada pembangunan kerajaan atau dinasti.
+          'The Legend of Exorcism' menampilkan dunia yang penuh dengan makhluk supernatural.
+          Konsep 'Five Elements' (Lima Elemen) adalah dasar dari banyak teknik kultivasi.
+          'Cinderella Chef' adalah donghua yang menyenangkan dengan sentuhan fantasi.
+          Banyak donghua yang memiliki adegan komedi yang ringan dan menghibur.
+          'Cupid's Chocolates' adalah donghua yang penuh dengan kesalahpahaman romantis.
+          Konsep 'Jianghu' adalah dunia yang penuh dengan seniman bela diri dan petualangan.
+          'Psychic Princess' menampilkan seorang putri yang bisa melihat roh.
+          Banyak donghua yang menampilkan cerita 'Underdog' (dari nol menjadi pahlawan).
+          'Dragon Raja' menampilkan pertarungan sengit antara manusia dan naga.
+          Konsep 'Demonic Path' (Jalur Iblis) adalah jalur kultivasi yang berbahaya.
+          'The Emperor's Strategy' adalah donghua dengan fokus pada strategi dan diplomasi.
+          Beberapa donghua menampilkan 'Time Manipulation' atau manipulasi waktu.
+          'The Legend of Hei' adalah kisah petualangan kucing roh.
+          Banyak donghua yang berfokus pada 'family honor' atau kehormatan keluarga.
+          'Spiritpact' menampilkan ikatan spiritual antara pengusir setan dan roh.
+          Konsep 'Soul Stone' adalah batu yang mengandung energi spiritual.
+          'The Outcast' menampilkan dunia 'underground' dengan kemampuan super.
+          Beberapa donghua berfokus pada 'ancient prophecies' atau ramalan kuno.
+          'Rakshasa Street' adalah donghua dengan tema pertempuran roh.
+          Konsep 'Golden Core' adalah inti kekuatan tertinggi bagi kultivator.
+          'The Daily Life of the Immortal King' adalah donghua yang ringan dan menghibur.
+          Banyak donghua yang memiliki visual yang memanjakan mata.
+          'Heaven Official's Blessing' adalah donghua yang diakui secara global.
+          Konsep 'Pill Concoction' adalah seni membuat pil kultivasi.
+          'The Chronologist' menampilkan karakter yang bisa melakukan perjalanan waktu.
+          Beberapa donghua berfokus pada 'secret arts' atau seni rahasia.
+          'The Memory of Chang'an' adalah donghua dengan kisah cinta yang manis.
+          Konsep 'Immortal World' adalah alam yang lebih tinggi.
+          'The Indomitable' menampilkan aksi-aksi pertarungan yang menegangkan.
+          Banyak donghua yang populer di platform streaming seperti YouTube.
+          'My Cultivator Girlfriend' adalah donghua dengan sentuhan komedi romantis.
+          Konsep 'Spiritual Root' menentukan potensi kultivasi seseorang.
+          'The Legend of Futian' menampilkan pertarungan untuk keadilan.
+          Beberapa donghua menampilkan 'Flying Swords' atau pedang terbang.
+          'Grandmaster of Demonic Cultivation' memiliki penggemar global yang besar.
+          EOF
+          )
+          echo "DONGHUA_FACT=$DONGHUA_FACT" >> $GITHUB_ENV
+
       - name: 🔔 Send Notification to Telegram
         uses: appleboy/telegram-action@v0.1.0
         with:
@@ -214,7 +853,7 @@ jobs:
             <b>╔═══🌌══════════🌌═══╗</b>
             <b>  🐉<b>SPIRIT VEINS AWAKENED</b>🐉  </b>
             <b>🏮<b>IMMORTAL SEAL UNLOCKED</b>🏮 </b>
-            <b>     🍃QI FLOW HARMONIZED🍃  </b>
+            <b>    🍃QI FLOW HARMONIZED🍃  </b>
             <b>╚═══🌌══════════🌌═══╝</b>
 
             <b>• 🔁 TRIAL_RUN :</b> <code>${{ env.NOTIF_COUNTER }}</code>
@@ -231,8 +870,10 @@ jobs:
             ━━━━━━━━━━━━━━━━━━━━━━
 
             <b>#DaoHeartUnbroken #DevOpsCultivation</b>
-            <b>Script by Abie Haryatmo, Guardian of the Sect</b>
             <b>🌌 "The immortal journey of cultivation in the DevOps realm continues..." 🌌</b>
+            <i>💡 Fun Fact Donghua: ${{ env.DONGHUA_FACT }}</i>
+
+            <b>Script by Abie Haryatmo, Guardian of the Sect</b>
 
           format: html
 
