@@ -779,7 +779,8 @@ jobs:
 
             <b>⚙️ #DaoHeartUnbroken #DevOpsCultivation</b>
             <b>👑 Script by Abie Haryatmo, Guardian of the Sect</b>
-            <b>🌌 "The immortal journey of cultivation in the DevOps realm continues..." 🌌</b>
+            <b>🌌 "The immortal journey of cultivation in the DevOps realm continues." 🌌</b>
+            
             <i>💡 Fun Fact Donghua: ${{ env.DONGHUA_FACT }}</i>
 
           format: html
