@@ -2,8 +2,8 @@ name: 🚀 Auto Cultivation Level Generator & Weekly Winner
 
 on:
   schedule:
-    - cron: '*/15 * * * *'
-    - cron: '0 0 * * 1'
+    - cron: '0 0 * * *'     # Setiap hari jam 07:00 WIB (00:00 UTC)
+    - cron: '0 0 * * 1'     # Setiap Senin jam 07:00 WIB (00:00 UTC)
   workflow_dispatch:
 
 jobs:
@@ -109,8 +109,8 @@ jobs:
           {
             echo "# Cultivation Level: $LEVEL_NAME"
             echo "# Generated at: $(date -u)"
-            echo "# By: abieharyatmo01@gmail.com"
-            echo "# Score: # Score: $score"
+            echo "# By: beeharry519@gmail.com"
+            echo "# Score: $score"
           } > "$file_name"
           echo "LEVEL_NAME=$LEVEL_NAME" >> $GITHUB_ENV
           echo "SCORE=$score" >> $GITHUB_ENV
